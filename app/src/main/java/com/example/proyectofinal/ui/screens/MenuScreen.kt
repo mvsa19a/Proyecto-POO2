@@ -26,7 +26,7 @@ fun PantallaMenu(
             onClick = { onBack() },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("← Volver")
+            Text("← Volver.")
         }
 
         Spacer(modifier = Modifier.height(20.dp))

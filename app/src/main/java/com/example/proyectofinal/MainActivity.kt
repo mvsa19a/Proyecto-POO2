@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
 
             when (pantallaActual.value) {
 
-                "inicio" -> PantallaInicio(
+                "inicio." -> PantallaInicio(
                     onIrInstrucciones = { pantallaActual.value = "instrucciones" },
                     onIrMenu = { pantallaActual.value = "menu" }
                 )
