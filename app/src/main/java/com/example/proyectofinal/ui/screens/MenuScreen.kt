@@ -33,7 +33,7 @@ fun PantallaMenu(
 
 
         Text(
-            text = "Menu Principal",
+            text = "Menu Principal.",
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold
         )

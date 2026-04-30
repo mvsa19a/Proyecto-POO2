@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
                 )
 
                 "instrucciones" -> PantallaInstrucciones(
-                    onBack = { pantallaActual.value = "inicio" }
+                    onBack = { pantallaActual.value = "inicio." }
                 )
 
                 "menu" -> PantallaMenu(
