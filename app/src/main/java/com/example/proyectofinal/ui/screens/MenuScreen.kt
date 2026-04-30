@@ -56,7 +56,7 @@ fun PantallaMenu(
             onClick = { },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Ver progreso")
+            Text("Ver progreso.")
         }
     }
 }

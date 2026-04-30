@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
 
                 "menu" -> PantallaMenu(
                     onIrNiveles = { },
-                    onBack = { pantallaActual.value = "inicio" } // 🔥 ESTA ERA LA QUE FALTABA
+                    onBack = { pantallaActual.value = "inicio" }
                 )
             }
         }
