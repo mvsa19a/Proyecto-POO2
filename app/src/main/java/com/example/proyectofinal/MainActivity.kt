@@ -146,7 +146,7 @@ fun PantallaInstrucciones(onBack: () -> Unit) {
         Spacer(modifier = Modifier.height(30.dp))
 
         Button(onClick = { onBack() }) {
-            Text("Volver")
+            Text("Volver.")
         }
     }
 }
