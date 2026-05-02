@@ -13,10 +13,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun PantallaMenu(
-    puntos: Int,
-    vidas: Int,
-    onIrNiveles: () -> Unit,
+fun PantallaNiveles(
+    onNivelSeleccionado: () -> Unit,
     onBack: () -> Unit
 ) {
 
@@ -44,21 +42,16 @@ fun PantallaMenu(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                Text("Menú Principal", fontSize = 24.sp)
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text("Puntos: $puntos")
-                Text("Vidas: $vidas ❤️")
+                Text("Habitaciones", fontSize = 24.sp)
 
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
-                    onClick = onIrNiveles,
+                    onClick = onNivelSeleccionado,
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(50)
                 ) {
-                    Text("Ir a niveles")
+                    Text("Edificio A")
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -68,10 +61,10 @@ fun PantallaMenu(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(50)
                 ) {
-                    Text("Ver progreso")
+                    Text("Edificio B 🔒")
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 OutlinedButton(
                     onClick = onBack,

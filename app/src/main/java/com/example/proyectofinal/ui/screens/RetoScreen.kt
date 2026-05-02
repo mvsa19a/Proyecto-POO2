@@ -13,11 +13,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun PantallaMenu(
-    puntos: Int,
-    vidas: Int,
-    onIrNiveles: () -> Unit,
-    onBack: () -> Unit
+fun PantallaReto(
+    onCorrecto: () -> Unit,
+    onIncorrecto: () -> Unit
 ) {
 
     val gradient = Brush.verticalGradient(
@@ -44,41 +42,30 @@ fun PantallaMenu(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                Text("Menú Principal", fontSize = 24.sp)
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text("Puntos: $puntos")
-                Text("Vidas: $vidas ❤️")
+                Text("Reto", fontSize = 24.sp)
 
                 Spacer(modifier = Modifier.height(20.dp))
 
+                Text("¿Cuál es un hábito saludable?")
+
+                Spacer(modifier = Modifier.height(15.dp))
+
                 Button(
-                    onClick = onIrNiveles,
+                    onClick = onCorrecto,
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(50)
                 ) {
-                    Text("Ir a niveles")
+                    Text("Beber agua")
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
 
                 OutlinedButton(
-                    onClick = { },
+                    onClick = onIncorrecto,
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(50)
                 ) {
-                    Text("Ver progreso")
-                }
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                OutlinedButton(
-                    onClick = onBack,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(50)
-                ) {
-                    Text("Volver")
+                    Text("No dormir")
                 }
             }
         }

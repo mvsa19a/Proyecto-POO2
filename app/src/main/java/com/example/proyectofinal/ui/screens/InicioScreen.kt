@@ -13,15 +13,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun PantallaMenu(
-    puntos: Int,
-    vidas: Int,
-    onIrNiveles: () -> Unit,
-    onBack: () -> Unit
+fun PantallaInicio(
+    onStart: () -> Unit
 ) {
 
+    // Fondo degradado
     val gradient = Brush.verticalGradient(
-        colors = listOf(Color(0xFF5B4BFF), Color(0xFFE96BA8))
+        colors = listOf(
+            Color(0xFF5B4BFF),
+            Color(0xFFE96BA8)
+        )
     )
 
     Box(
@@ -31,6 +32,7 @@ fun PantallaMenu(
         contentAlignment = Alignment.Center
     ) {
 
+        // 🪪 Tarjeta central
         Card(
             shape = RoundedCornerShape(20.dp),
             elevation = CardDefaults.cardElevation(8.dp),
@@ -44,41 +46,38 @@ fun PantallaMenu(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                Text("Menú Principal", fontSize = 24.sp)
+                Text(
+                    text = "Escape UAM",
+                    fontSize = 24.sp
+                )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                Text("Puntos: $puntos")
-                Text("Vidas: $vidas ❤️")
+                Text(
+                    text = "Explorá edificios, resolvé retos y desbloqueá pistas para avanzar al siguiente nivel.",
+                    fontSize = 14.sp
+                )
 
                 Spacer(modifier = Modifier.height(20.dp))
 
+                // 🔥 Botón principal
                 Button(
-                    onClick = onIrNiveles,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(50)
+                    onClick = onStart,
+                    shape = RoundedCornerShape(50),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Ir a niveles")
+                    Text("Comenzar juego")
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
 
+                // 🔹 Botón secundario
                 OutlinedButton(
                     onClick = { },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(50)
+                    shape = RoundedCornerShape(50),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Ver progreso")
-                }
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                OutlinedButton(
-                    onClick = onBack,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(50)
-                ) {
-                    Text("Volver")
+                    Text("Ver instrucciones")
                 }
             }
         }
