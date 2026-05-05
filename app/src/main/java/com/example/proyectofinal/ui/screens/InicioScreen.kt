@@ -60,7 +60,7 @@ fun PantallaInicio(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // 🔥 Botón principal
+                // Botón principal
                 Button(
                     onClick = onStart,
                     shape = RoundedCornerShape(50),
@@ -71,7 +71,7 @@ fun PantallaInicio(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // 🔹 Botón secundario
+                // Botón secundario
                 OutlinedButton(
                     onClick = { },
                     shape = RoundedCornerShape(50),
