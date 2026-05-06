@@ -14,13 +14,34 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun PantallaReto(
+    nivel: String,
     onCorrecto: () -> Unit,
-    onIncorrecto: () -> Unit
+    onIncorrecto: () -> Unit,
+    onBack: () -> Unit
 ) {
-
     val gradient = Brush.verticalGradient(
         colors = listOf(Color(0xFF5B4BFF), Color(0xFFE96BA8))
     )
+
+    val titulo: String
+    val pregunta: String
+    val opcionCorrecta: String
+    val opcionIncorrecta: String
+    val puntos: String
+
+    if (nivel == "biblioteca") {
+        titulo = "Biblioteca Central"
+        pregunta = "Para avanzar, resolvé esta pista: si cada sala tiene 4 mesas y cada mesa tiene 3 pistas, ¿cuántas pistas hay en 5 salas?"
+        opcionCorrecta = "60 pistas"
+        opcionIncorrecta = "35 pistas"
+        puntos = "Recompensa: 20 puntos"
+    } else {
+        titulo = "Edificio A"
+        pregunta = "¿Cuál es un hábito saludable?"
+        opcionCorrecta = "Beber agua"
+        opcionIncorrecta = "No dormir"
+        puntos = "Recompensa: 10 puntos"
+    }
 
     Box(
         modifier = Modifier
@@ -28,34 +49,35 @@ fun PantallaReto(
             .background(gradient),
         contentAlignment = Alignment.Center
     ) {
-
         Card(
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(8.dp),
+            shape = RoundedCornerShape(24.dp),
+            elevation = CardDefaults.cardElevation(10.dp),
             modifier = Modifier
                 .padding(20.dp)
                 .fillMaxWidth()
         ) {
-
             Column(
-                modifier = Modifier.padding(20.dp),
+                modifier = Modifier.padding(22.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Text(titulo, fontSize = 26.sp)
 
-                Text("Reto", fontSize = 24.sp)
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Text(puntos)
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                Text("¿Cuál es un hábito saludable?")
+                Text(pregunta)
 
-                Spacer(modifier = Modifier.height(15.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
                     onClick = onCorrecto,
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(50)
                 ) {
-                    Text("Beber agua")
+                    Text(opcionCorrecta)
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -65,7 +87,17 @@ fun PantallaReto(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(50)
                 ) {
-                    Text("No dormir")
+                    Text(opcionIncorrecta)
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedButton(
+                    onClick = onBack,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(50)
+                ) {
+                    Text("Volver a niveles")
                 }
             }
         }

@@ -14,10 +14,9 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun PantallaNiveles(
-    onNivelSeleccionado: () -> Unit,
+    onNivelSeleccionado: (String) -> Unit,
     onBack: () -> Unit
 ) {
-
     val gradient = Brush.verticalGradient(
         colors = listOf(Color(0xFF5B4BFF), Color(0xFFE96BA8))
     )
@@ -28,30 +27,41 @@ fun PantallaNiveles(
             .background(gradient),
         contentAlignment = Alignment.Center
     ) {
-
         Card(
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(8.dp),
+            shape = RoundedCornerShape(24.dp),
+            elevation = CardDefaults.cardElevation(10.dp),
             modifier = Modifier
                 .padding(20.dp)
                 .fillMaxWidth()
         ) {
-
             Column(
-                modifier = Modifier.padding(20.dp),
+                modifier = Modifier.padding(22.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Text("Habitaciones", fontSize = 26.sp)
 
-                Text("Habitaciones", fontSize = 24.sp)
+                Spacer(modifier = Modifier.height(8.dp))
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Text("Seleccioná un lugar para resolver el reto.")
+
+                Spacer(modifier = Modifier.height(22.dp))
 
                 Button(
-                    onClick = onNivelSeleccionado,
+                    onClick = { onNivelSeleccionado("edificioA") },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(50)
                 ) {
-                    Text("Edificio A")
+                    Text("Edificio A - Reto básico")
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Button(
+                    onClick = { onNivelSeleccionado("biblioteca") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(50)
+                ) {
+                    Text("Biblioteca Central - Reto avanzado")
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -61,7 +71,7 @@ fun PantallaNiveles(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(50)
                 ) {
-                    Text("Edificio B 🔒")
+                    Text("Edificio B bloqueado")
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))

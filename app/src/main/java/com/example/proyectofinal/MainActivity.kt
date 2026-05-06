@@ -12,13 +12,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ProyectoFINALTheme() {
+            ProyectoFINALTheme {
 
-                var pantallaActual = remember { mutableStateOf("inicio") }
-
-                // 🔥 Estado del usuario
+                val pantallaActual = remember { mutableStateOf("inicio") }
                 var puntos by remember { mutableStateOf(0) }
                 var vidas by remember { mutableStateOf(3) }
+                var nivelSeleccionado by remember { mutableStateOf("edificioA") }
 
                 when (pantallaActual.value) {
 
@@ -34,21 +33,41 @@ class MainActivity : ComponentActivity() {
                     )
 
                     "niveles" -> PantallaNiveles(
-                        onNivelSeleccionado = {
+                        onNivelSeleccionado = { nivel ->
+                            nivelSeleccionado = nivel
+
+                            if (nivel == "edificioA") {
+                                pantallaActual.value = "exploracion"
+                            } else {
+                                pantallaActual.value = "reto"
+                            }
+                        },
+
+                        onBack = { pantallaActual.value = "menu" }
+                    )
+                    "exploracion" -> PantallaExploracion(
+
+                        onPistaEncontrada = {
+                            puntos += 15
                             pantallaActual.value = "reto"
                         },
-                        onBack = { pantallaActual.value = "menu" }
+
+                        onBack = {
+                            pantallaActual.value = "niveles"
+                        }
                     )
 
                     "reto" -> PantallaReto(
+                        nivel = nivelSeleccionado,
                         onCorrecto = {
-                            puntos += 10
+                            puntos += if (nivelSeleccionado == "biblioteca") 20 else 10
                             pantallaActual.value = "menu"
                         },
                         onIncorrecto = {
                             vidas--
                             pantallaActual.value = "menu"
-                        }
+                        },
+                        onBack = { pantallaActual.value = "niveles" }
                     )
                 }
             }

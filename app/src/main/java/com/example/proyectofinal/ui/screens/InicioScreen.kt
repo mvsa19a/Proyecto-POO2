@@ -32,7 +32,6 @@ fun PantallaInicio(
         contentAlignment = Alignment.Center
     ) {
 
-        // 🪪 Tarjeta central
         Card(
             shape = RoundedCornerShape(20.dp),
             elevation = CardDefaults.cardElevation(8.dp),
