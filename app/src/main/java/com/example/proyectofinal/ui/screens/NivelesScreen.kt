@@ -18,7 +18,11 @@ fun PantallaNiveles(
     onBack: () -> Unit
 ) {
     val gradient = Brush.verticalGradient(
-        colors = listOf(Color(0xFF5B4BFF), Color(0xFFE96BA8))
+        colors = listOf(
+            Color(0xFF052E16),
+            Color(0xFF166534),
+            Color(0xFF4ADE80)
+        )
     )
 
     Box(
@@ -38,7 +42,7 @@ fun PantallaNiveles(
                 modifier = Modifier.padding(22.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Habitaciones", fontSize = 26.sp)
+                Text("🗺 Habitaciones", fontSize = 32.sp)
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -51,7 +55,7 @@ fun PantallaNiveles(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(50)
                 ) {
-                    Text("Edificio A - Reto básico")
+                    Text("🏢 Edificio A - Reto basico")
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -61,7 +65,7 @@ fun PantallaNiveles(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(50)
                 ) {
-                    Text("Biblioteca Central - Reto avanzado")
+                    Text("📚 Biblioteca Central - Reto avanzado")
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -71,7 +75,7 @@ fun PantallaNiveles(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(50)
                 ) {
-                    Text("Edificio B bloqueado")
+                    Text("🔒 Edificio B bloqueado")
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -81,7 +85,7 @@ fun PantallaNiveles(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(50)
                 ) {
-                    Text("Volver")
+                    Text("⬅ Volver")
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.example.proyectofinal.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,8 +10,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.proyectofinal.R
 
 @Composable
 fun PantallaInicio(
@@ -45,9 +48,15 @@ fun PantallaInicio(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
+                Image(
+                    painter = painterResource(id = R.drawable.uam_logo),
+                    contentDescription = "Logo UAM",
+                    modifier = Modifier.size(120.dp)
+                )
+
                 Text(
-                    text = "Escape UAM",
-                    fontSize = 24.sp
+                    text = "🏫 Escape UAM",
+                    fontSize = 32.sp
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -65,7 +74,7 @@ fun PantallaInicio(
                     shape = RoundedCornerShape(50),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Comenzar juego")
+                    Text("🎮 Comenzar juego")
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -76,7 +85,7 @@ fun PantallaInicio(
                     shape = RoundedCornerShape(50),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Ver instrucciones")
+                    Text("📖 Ver instrucciones")
                 }
             }
         }

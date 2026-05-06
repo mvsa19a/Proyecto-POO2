@@ -21,7 +21,11 @@ fun PantallaMenu(
 ) {
 
     val gradient = Brush.verticalGradient(
-        colors = listOf(Color(0xFF5B4BFF), Color(0xFFE96BA8))
+        colors = listOf(
+            Color(0xFF0F172A),
+            Color(0xFF1D4ED8),
+            Color(0xFF38BDF8)
+        )
     )
 
     Box(
@@ -44,12 +48,12 @@ fun PantallaMenu(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                Text("Menú Principal", fontSize = 24.sp)
+                Text("🎮 Menú Principal", fontSize = 32.sp)
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                Text("Puntos: $puntos")
-                Text("Vidas: $vidas ❤️")
+                Text("⭐ Puntos: $puntos", fontSize = 18.sp)
+                Text("❤️ Vidas: $vidas", fontSize = 18.sp)
 
                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -58,7 +62,7 @@ fun PantallaMenu(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(50)
                 ) {
-                    Text("Ir a niveles")
+                    Text("🗺 Ir a niveles")
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -68,7 +72,7 @@ fun PantallaMenu(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(50)
                 ) {
-                    Text("Ver progreso")
+                    Text("📊 Ver progreso")
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -78,7 +82,7 @@ fun PantallaMenu(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(50)
                 ) {
-                    Text("Volver")
+                    Text("⬅ Volver")
                 }
             }
         }

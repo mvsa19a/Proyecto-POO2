@@ -20,7 +20,11 @@ fun PantallaReto(
     onBack: () -> Unit
 ) {
     val gradient = Brush.verticalGradient(
-        colors = listOf(Color(0xFF5B4BFF), Color(0xFFE96BA8))
+        colors = listOf(
+            Color(0xFF450A0A),
+            Color(0xFF991B1B),
+            Color(0xFFF97316)
+        )
     )
 
     val titulo: String
@@ -60,7 +64,7 @@ fun PantallaReto(
                 modifier = Modifier.padding(22.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(titulo, fontSize = 26.sp)
+                Text("🧠 $titulo", fontSize = 32.sp)
 
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -97,7 +101,7 @@ fun PantallaReto(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(50)
                 ) {
-                    Text("Volver a niveles")
+                    Text("⬅ Volver a niveles")
                 }
             }
         }

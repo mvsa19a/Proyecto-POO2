@@ -27,7 +27,11 @@ fun PantallaExploracion(
     val encontroPista = fila == pistaFila && columna == pistaColumna
 
     val gradient = Brush.verticalGradient(
-        colors = listOf(Color(0xFF1B1B3A), Color(0xFF693668), Color(0xFFE96BA8))
+        colors = listOf(
+            Color(0xFF111827),
+            Color(0xFF374151),
+            Color(0xFFF59E0B)
+        )
     )
 
     Box(
@@ -46,11 +50,11 @@ fun PantallaExploracion(
                 modifier = Modifier.padding(18.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Exploración del Edificio", fontSize = 24.sp)
+                Text("🔎 Exploración del Edificio", fontSize = 30.sp)
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                Text("Mové al personaje hasta encontrar la pista escondida.")
+                Text("🧍 Mové al personaje hasta encontrar la pista escondida 🔎")
 
                 Spacer(modifier = Modifier.height(20.dp))
 
