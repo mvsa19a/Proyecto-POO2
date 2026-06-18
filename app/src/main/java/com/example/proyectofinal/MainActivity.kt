@@ -22,7 +22,13 @@ class MainActivity : ComponentActivity() {
                 when (pantallaActual.value) {
 
                     "inicio" -> PantallaInicio(
-                        onStart = { pantallaActual.value = "menu" }
+                        onStart = { pantallaActual.value = "menu" },
+                        onInstructions = { pantallaActual.value = "instrucciones" }
+
+                    )
+                    "instrucciones" -> PantallaInstrucciones(
+                        onComenzar = { pantallaActual.value = "menu" },
+                        onBack = { pantallaActual.value = "inicio" }
                     )
 
                     "menu" -> PantallaMenu(
