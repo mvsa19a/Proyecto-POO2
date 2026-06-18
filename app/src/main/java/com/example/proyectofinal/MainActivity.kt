@@ -15,30 +15,49 @@ class MainActivity : ComponentActivity() {
             ProyectoFINALTheme {
 
                 val pantallaActual = remember { mutableStateOf("inicio") }
+
                 var puntos by remember { mutableStateOf(0) }
                 var vidas by remember { mutableStateOf(3) }
                 var nivelSeleccionado by remember { mutableStateOf("edificioA") }
 
+                var bibliotecaDesbloqueada by remember { mutableStateOf(false) }
+                var edificioBDesbloqueado by remember { mutableStateOf(false) }
+
                 when (pantallaActual.value) {
 
                     "inicio" -> PantallaInicio(
-                        onStart = { pantallaActual.value = "menu" },
-                        onInstructions = { pantallaActual.value = "instrucciones" }
-
+                        onStart = {
+                            pantallaActual.value = "menu"
+                        },
+                        onInstructions = {
+                            pantallaActual.value = "instrucciones"
+                        }
                     )
+
                     "instrucciones" -> PantallaInstrucciones(
-                        onComenzar = { pantallaActual.value = "menu" },
-                        onBack = { pantallaActual.value = "inicio" }
+                        onComenzar = {
+                            pantallaActual.value = "menu"
+                        },
+                        onBack = {
+                            pantallaActual.value = "inicio"
+                        }
                     )
 
                     "menu" -> PantallaMenu(
                         puntos = puntos,
                         vidas = vidas,
-                        onIrNiveles = { pantallaActual.value = "niveles" },
-                        onBack = { pantallaActual.value = "inicio" }
+                        onIrNiveles = {
+                            pantallaActual.value = "niveles"
+                        },
+                        onBack = {
+                            pantallaActual.value = "inicio"
+                        }
                     )
 
                     "niveles" -> PantallaNiveles(
+                        bibliotecaDesbloqueada = bibliotecaDesbloqueada,
+                        edificioBDesbloqueado = edificioBDesbloqueado,
+
                         onNivelSeleccionado = { nivel ->
                             nivelSeleccionado = nivel
 
@@ -49,15 +68,16 @@ class MainActivity : ComponentActivity() {
                             }
                         },
 
-                        onBack = { pantallaActual.value = "menu" }
+                        onBack = {
+                            pantallaActual.value = "menu"
+                        }
                     )
-                    "exploracion" -> PantallaExploracion(
 
+                    "exploracion" -> PantallaExploracion(
                         onPistaEncontrada = {
                             puntos += 15
                             pantallaActual.value = "reto"
                         },
-
                         onBack = {
                             pantallaActual.value = "niveles"
                         }
@@ -65,15 +85,38 @@ class MainActivity : ComponentActivity() {
 
                     "reto" -> PantallaReto(
                         nivel = nivelSeleccionado,
+
                         onCorrecto = {
-                            puntos += if (nivelSeleccionado == "biblioteca") 20 else 10
-                            pantallaActual.value = "menu"
+                            when (nivelSeleccionado) {
+                                "edificioA" -> {
+                                    puntos += 10
+                                    bibliotecaDesbloqueada = true
+                                }
+
+                                "biblioteca" -> {
+                                    puntos += 20
+                                    edificioBDesbloqueado = true
+                                }
+
+                                "edificioB" -> {
+                                    puntos += 30
+                                }
+                            }
+
+                            pantallaActual.value = "niveles"
                         },
+
                         onIncorrecto = {
-                            vidas--
-                            pantallaActual.value = "menu"
+                            if (vidas > 0) {
+                                vidas--
+                            }
+
+                            pantallaActual.value = "niveles"
                         },
-                        onBack = { pantallaActual.value = "niveles" }
+
+                        onBack = {
+                            pantallaActual.value = "niveles"
+                        }
                     )
                 }
             }

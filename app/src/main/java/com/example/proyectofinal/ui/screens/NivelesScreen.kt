@@ -3,7 +3,9 @@ package com.example.proyectofinal.ui.screens
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -22,6 +24,8 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun PantallaNiveles(
+    bibliotecaDesbloqueada: Boolean,
+    edificioBDesbloqueado: Boolean,
     onNivelSeleccionado: (String) -> Unit,
     onBack: () -> Unit
 ) {
@@ -48,11 +52,12 @@ fun PantallaNiveles(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 26.dp, vertical = 34.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(18.dp))
 
             Text(
                 text = "Escape UAM",
@@ -74,7 +79,7 @@ fun PantallaNiveles(
             Spacer(modifier = Modifier.height(10.dp))
 
             Text(
-                text = "Seleccioná una zona del campus para resolver el reto y avanzar de nivel.",
+                text = "Seleccioná una zona del campus. Completá retos para desbloquear nuevas habitaciones.",
                 fontSize = 15.sp,
                 lineHeight = 22.sp,
                 color = textoSecundario,
@@ -86,8 +91,8 @@ fun PantallaNiveles(
             NivelDisponibleCard(
                 emoji = "🏢",
                 titulo = "Edificio A",
-                descripcion = "Reto básico para iniciar tu recorrido por el campus.",
-                etiqueta = "Nivel básico",
+                descripcion = "Reto inicial para comenzar tu recorrido por el campus.",
+                etiqueta = "Disponible",
                 boton = "Entrar al Edificio A",
                 colorPrincipal = celeste,
                 onClick = { onNivelSeleccionado("edificioA") }
@@ -95,25 +100,45 @@ fun PantallaNiveles(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            NivelDisponibleCard(
-                emoji = "📚",
-                titulo = "Biblioteca Central",
-                descripcion = "Reto avanzado con preguntas y pistas más difíciles.",
-                etiqueta = "Nivel avanzado",
-                boton = "Entrar a Biblioteca",
-                colorPrincipal = celeste,
-                onClick = { onNivelSeleccionado("biblioteca") }
-            )
+            if (bibliotecaDesbloqueada) {
+                NivelDisponibleCard(
+                    emoji = "📚",
+                    titulo = "Biblioteca Central",
+                    descripcion = "Reto avanzado con preguntas generadas por IA local.",
+                    etiqueta = "Desbloqueado",
+                    boton = "Entrar a Biblioteca",
+                    colorPrincipal = celeste,
+                    onClick = { onNivelSeleccionado("biblioteca") }
+                )
+            } else {
+                NivelBloqueadoCard(
+                    emoji = "🔒",
+                    titulo = "Biblioteca Central",
+                    descripcion = "Completá el reto del Edificio A para desbloquear esta zona."
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            NivelBloqueadoCard(
-                emoji = "🔒",
-                titulo = "Edificio B",
-                descripcion = "Este nivel se desbloquea cuando completés los retos anteriores."
-            )
+            if (edificioBDesbloqueado) {
+                NivelDisponibleCard(
+                    emoji = "🏛️",
+                    titulo = "Edificio B",
+                    descripcion = "Zona desbloqueada después de completar la Biblioteca Central.",
+                    etiqueta = "Desbloqueado",
+                    boton = "Entrar al Edificio B",
+                    colorPrincipal = celeste,
+                    onClick = { onNivelSeleccionado("edificioB") }
+                )
+            } else {
+                NivelBloqueadoCard(
+                    emoji = "🔒",
+                    titulo = "Edificio B",
+                    descripcion = "Completá el reto de la Biblioteca para desbloquear esta zona."
+                )
+            }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(24.dp))
 
             OutlinedButton(
                 onClick = onBack,
