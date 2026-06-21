@@ -1,92 +1,313 @@
 package com.example.proyectofinal.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
 fun PantallaNiveles(
-    onNivelSeleccionado: (String) -> Unit,
+    edificiosDesbloqueados: Int,
+    onEdificioSeleccionado: (String) -> Unit,
     onBack: () -> Unit
 ) {
-    val gradient = Brush.verticalGradient(
-        colors = listOf(
-            Color(0xFF052E16),
-            Color(0xFF166534),
-            Color(0xFF4ADE80)
-        )
+    val celeste = Color(0xFF32A0A6)
+    val celesteOscuro = Color(0xFF187C84)
+    val fondoClaro = Color(0xFFF3FBFC)
+    val textoPrincipal = Color(0xFF1F2937)
+    val textoSecundario = Color(0xFF64748B)
+    val bordeSuave = Color(0xFFD6E3E6)
+
+    val edificios = listOf(
+        Triple("edificioA", "Edificio A", "Admisión, Registro Académico y Producción Audiovisual"),
+        Triple("edificioE", "Edificio E", "Medicina"),
+        Triple("edificioJ", "Edificio J", "Odontología"),
+        Triple("edificioP", "Edificio P", "Copérnico"),
+        Triple("edificioO", "Edificio O", "Ingeniería y Arquitectura"),
+        Triple("edificioK", "Edificio K", "Sección Deportiva"),
+        Triple("edificioF", "Edificio F", "Ciencias Jurídicas"),
+        Triple("edificioI", "Edificio I", "Ciencias Comerciales, Administrativas y Económicas")
     )
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(gradient),
-        contentAlignment = Alignment.Center
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color.White,
+                        fondoClaro,
+                        Color(0xFFE4F5F7)
+                    )
+                )
+            )
     ) {
-        Card(
-            shape = RoundedCornerShape(24.dp),
-            elevation = CardDefaults.cardElevation(10.dp),
+        Column(
             modifier = Modifier
-                .padding(20.dp)
-                .fillMaxWidth()
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 26.dp, vertical = 34.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier.padding(22.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+
+            Spacer(modifier = Modifier.height(18.dp))
+
+            Text(
+                text = "Escape UAM",
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = celesteOscuro
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Edificios UAM",
+                fontSize = 36.sp,
+                fontWeight = FontWeight.Bold,
+                color = textoPrincipal,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(
+                text = "Seleccioná un edificio desbloqueado para empezar sus retos.",
+                fontSize = 15.sp,
+                lineHeight = 22.sp,
+                color = textoSecundario,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            edificios.forEachIndexed { index, edificio ->
+                val codigo = edificio.first
+                val nombre = edificio.second
+                val descripcion = edificio.third
+                val desbloqueado = index < edificiosDesbloqueados
+
+                if (desbloqueado) {
+                    NivelDisponibleCard(
+                        emoji = "🏢",
+                        titulo = nombre,
+                        descripcion = descripcion,
+                        etiqueta = "Desbloqueado",
+                        boton = "Entrar",
+                        colorPrincipal = celeste,
+                        onClick = { onEdificioSeleccionado(codigo) }
+                    )
+                } else {
+                    NivelBloqueadoCard(
+                        emoji = "🔒",
+                        titulo = nombre,
+                        descripcion = "Completá el edificio anterior para desbloquear esta zona."
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedButton(
+                onClick = onBack,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(18.dp),
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = bordeSuave
+                )
             ) {
-                Text("🗺 Habitaciones", fontSize = 32.sp)
+                Text(
+                    text = "Volver al menú",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = celesteOscuro
+                )
+            }
 
-                Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
+        }
+    }
+}
 
-                Text("Seleccioná un lugar para resolver el reto.")
-
-                Spacer(modifier = Modifier.height(22.dp))
-
-                Button(
-                    onClick = { onNivelSeleccionado("edificioA") },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(50)
+@Composable
+fun NivelDisponibleCard(
+    emoji: String,
+    titulo: String,
+    descripcion: String,
+    etiqueta: String,
+    boton: String,
+    colorPrincipal: Color,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(26.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 5.dp
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Card(
+                    modifier = Modifier.size(54.dp),
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFFE4F5F7)
+                    )
                 ) {
-                    Text("🏢 Edificio A - Reto basico")
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = emoji,
+                            fontSize = 27.sp
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.width(14.dp))
 
-                Button(
-                    onClick = { onNivelSeleccionado("biblioteca") },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(50)
-                ) {
-                    Text("📚 Biblioteca Central - Reto avanzado")
+                Column {
+                    Text(
+                        text = titulo,
+                        fontSize = 21.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1F2937)
+                    )
+
+                    Spacer(modifier = Modifier.height(3.dp))
+
+                    Text(
+                        text = etiqueta,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = colorPrincipal
+                    )
                 }
+            }
 
-                Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
-                OutlinedButton(
-                    onClick = { },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(50)
+            Text(
+                text = descripcion,
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+                color = Color(0xFF64748B)
+            )
+
+            Spacer(modifier = Modifier.height(18.dp))
+
+            Button(
+                onClick = onClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorPrincipal
+                )
+            ) {
+                Text(
+                    text = boton,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun NivelBloqueadoCard(
+    emoji: String,
+    titulo: String,
+    descripcion: String
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(26.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFF1F5F9)
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 2.dp
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Card(
+                modifier = Modifier.size(54.dp),
+                shape = RoundedCornerShape(18.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFFE2E8F0)
+                )
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text("🔒 Edificio B bloqueado")
+                    Text(
+                        text = emoji,
+                        fontSize = 26.sp
+                    )
                 }
+            }
 
-                Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.width(14.dp))
 
-                OutlinedButton(
-                    onClick = onBack,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(50)
-                ) {
-                    Text("⬅ Volver")
-                }
+            Column {
+                Text(
+                    text = titulo,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF475569)
+                )
+
+                Spacer(modifier = Modifier.height(5.dp))
+
+                Text(
+                    text = descripcion,
+                    fontSize = 13.sp,
+                    lineHeight = 19.sp,
+                    color = Color(0xFF64748B)
+                )
             }
         }
     }
