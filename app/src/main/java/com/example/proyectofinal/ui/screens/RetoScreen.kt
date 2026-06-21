@@ -2179,15 +2179,6 @@ fun PantallaReto(
     onSiguienteNivel: () -> Unit,
     onBack: () -> Unit
 ) {
-<<<<<<< HEAD
-    val gradient = Brush.verticalGradient(
-        colors = listOf(
-            Color(0xFF450A0A),
-            Color(0xFF991B1B),
-            Color(0xFFF97316)
-        )
-    )
-=======
     val celeste = Color(0xFF32A0A6)
     val celesteOscuro = Color(0xFF187C84)
     val fondoClaro = Color(0xFFF3FBFC)
@@ -2196,7 +2187,6 @@ fun PantallaReto(
     val bordeSuave = Color(0xFFD6E3E6)
     val verdeCorrecto = Color(0xFF2E7D32)
     val rojoIncorrecto = Color(0xFFC62828)
->>>>>>> Davis
 
     val reto = remember(nivel, numeroNivel, preguntasUsadas.joinToString()) {
         generarRetoIA(
@@ -2302,29 +2292,10 @@ fun PantallaReto(
                     defaultElevation = 5.dp
                 )
             ) {
-<<<<<<< HEAD
-                Text("🧠 $titulo", fontSize = 32.sp)
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text(puntos)
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Text(pregunta)
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Button(
-                    onClick = onCorrecto,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(50)
-=======
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(22.dp)
->>>>>>> Davis
                 ) {
                     Text(
                         text = "Pista del nivel",
@@ -2550,16 +2521,12 @@ fun PantallaReto(
                         color = bordeSuave
                     )
                 ) {
-<<<<<<< HEAD
-                    Text("⬅ Volver a niveles")
-=======
                     Text(
                         text = "Volver al edificio",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Medium,
                         color = celesteOscuro
                     )
->>>>>>> Davis
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
