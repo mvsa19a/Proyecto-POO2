@@ -4,8 +4,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 data class RetoIA(
+    val id: Int,
     val titulo: String,
     val dificultad: String,
     val pista: String,
@@ -38,244 +39,299 @@ data class RetoIA(
     val recompensa: Int
 )
 
-fun generarRetoIA(nivel: String, numeroNivel: Int): RetoIA {
-    val retosPorNivel = mapOf(
-        "edificioA" to listOf(
-            RetoIA(
-                titulo = "Edificio A",
-                dificultad = "Nivel básico",
-                pista = "La IA generó una pista de orientación para iniciar tu recorrido.",
-                pregunta = "¿Qué acción te ayuda más a prepararte antes de una clase importante?",
-                opciones = listOf("Revisar tus materiales", "Llegar tarde", "No llevar cuaderno"),
-                respuestaCorrecta = "Revisar tus materiales",
-                recompensa = 10
-            ),
-            RetoIA(
-                titulo = "Edificio A",
-                dificultad = "Nivel básico",
-                pista = "La IA seleccionó un reto rápido sobre hábitos universitarios.",
-                pregunta = "¿Cuál es un hábito saludable para mantener energía durante el día?",
-                opciones = listOf("Tomar agua", "No dormir", "Saltarse comidas"),
-                respuestaCorrecta = "Tomar agua",
-                recompensa = 10
-            ),
-            RetoIA(
-                titulo = "Edificio A",
-                dificultad = "Nivel básico",
-                pista = "La IA detectó una pregunta sencilla de lógica.",
-                pregunta = "Si encontrás 3 pistas y luego descubrís 2 más, ¿cuántas pistas tenés?",
-                opciones = listOf("5 pistas", "3 pistas", "6 pistas"),
-                respuestaCorrecta = "5 pistas",
-                recompensa = 10
-            )
+fun obtenerDificultadPorNivel(numeroNivel: Int): String {
+    return when (numeroNivel) {
+        in 0..3 -> "Fácil"
+        in 4..6 -> "Media"
+        else -> "Difícil"
+    }
+}
+
+fun preguntasEdificioA(): List<RetoIA> {
+    return listOf(
+        // 9 preguntas fáciles
+        RetoIA(
+            id = 1,
+            titulo = "Edificio A",
+            dificultad = "Fácil",
+            pista = "Antes de avanzar, revisá bien cada opción.",
+            pregunta = "¿Qué documento suele solicitarse para realizar trámites académicos?",
+            opciones = listOf("Carné estudiantil", "Receta médica", "Factura de supermercado"),
+            respuestaCorrecta = "Carné estudiantil",
+            recompensa = 10
         ),
-        "edificioE" to listOf(
-            RetoIA(
-                titulo = "Edificio E",
-                dificultad = "Nivel medio",
-                pista = "La IA creó un reto sobre bienestar y salud.",
-                pregunta = "¿Qué práctica ayuda a prevenir enfermedades en un entorno universitario?",
-                opciones = listOf("Lavarse las manos", "Compartir vasos", "Ignorar síntomas"),
-                respuestaCorrecta = "Lavarse las manos",
-                recompensa = 15
-            ),
-            RetoIA(
-                titulo = "Edificio E",
-                dificultad = "Nivel medio",
-                pista = "La IA generó una pregunta sobre atención básica.",
-                pregunta = "Si alguien se desmaya, ¿qué deberías hacer primero?",
-                opciones = listOf("Pedir ayuda", "Moverlo rápido", "Dejarlo solo"),
-                respuestaCorrecta = "Pedir ayuda",
-                recompensa = 15
-            ),
-            RetoIA(
-                titulo = "Edificio E",
-                dificultad = "Nivel medio",
-                pista = "La IA seleccionó un reto sobre hábitos saludables.",
-                pregunta = "¿Cuál de estas opciones apoya mejor una buena salud?",
-                opciones = listOf("Dormir bien", "Saltarse el descanso", "Beber solo refresco"),
-                respuestaCorrecta = "Dormir bien",
-                recompensa = 15
-            )
+        RetoIA(
+            id = 2,
+            titulo = "Edificio A",
+            dificultad = "Fácil",
+            pista = "Pensá en una acción básica antes de iniciar clases.",
+            pregunta = "¿Qué acción ayuda a prepararte mejor antes de una clase importante?",
+            opciones = listOf("Revisar tus materiales", "Llegar tarde", "No llevar cuaderno"),
+            respuestaCorrecta = "Revisar tus materiales",
+            recompensa = 10
         ),
-        "edificioJ" to listOf(
-            RetoIA(
-                titulo = "Edificio J",
-                dificultad = "Nivel medio",
-                pista = "La IA pensó en cuidado dental preventivo.",
-                pregunta = "¿Cuántas veces al día se recomienda cepillarse los dientes?",
-                opciones = listOf("2 veces", "1 vez al mes", "5 veces"),
-                respuestaCorrecta = "2 veces",
-                recompensa = 15
-            ),
-            RetoIA(
-                titulo = "Edificio J",
-                dificultad = "Nivel medio",
-                pista = "La IA generó un reto sobre higiene bucal.",
-                pregunta = "¿Qué elemento ayuda a limpiar entre los dientes?",
-                opciones = listOf("Hilo dental", "Papel", "Cinta adhesiva"),
-                respuestaCorrecta = "Hilo dental",
-                recompensa = 15
-            ),
-            RetoIA(
-                titulo = "Edificio J",
-                dificultad = "Nivel medio",
-                pista = "La IA seleccionó una pregunta sobre alimentación y dientes.",
-                pregunta = "¿Qué alimento conviene limitar para cuidar el esmalte dental?",
-                opciones = listOf("Azúcar en exceso", "Agua", "Verduras"),
-                respuestaCorrecta = "Azúcar en exceso",
-                recompensa = 15
-            )
+        RetoIA(
+            id = 3,
+            titulo = "Edificio A",
+            dificultad = "Fácil",
+            pista = "La organización es clave para no perder información.",
+            pregunta = "¿Qué es recomendable hacer con los horarios de clase?",
+            opciones = listOf("Guardarlos y revisarlos", "Ignorarlos", "Borrarlos de inmediato"),
+            respuestaCorrecta = "Guardarlos y revisarlos",
+            recompensa = 10
         ),
-        "edificioP" to listOf(
-            RetoIA(
-                titulo = "Edificio P",
-                dificultad = "Nivel medio",
-                pista = "La IA creó un reto inspirado en Copérnico.",
-                pregunta = "¿Qué modelo defendió Copérnico?",
-                opciones = listOf("Heliocéntrico", "Geocéntrico", "Lunar"),
-                respuestaCorrecta = "Heliocéntrico",
-                recompensa = 15
-            ),
-            RetoIA(
-                titulo = "Edificio P",
-                dificultad = "Nivel medio",
-                pista = "La IA generó una pregunta astronómica.",
-                pregunta = "¿Qué cuerpo celeste gira alrededor de la Tierra?",
-                opciones = listOf("La Luna", "El Sol", "Marte"),
-                respuestaCorrecta = "La Luna",
-                recompensa = 15
-            ),
-            RetoIA(
-                titulo = "Edificio P",
-                dificultad = "Nivel medio",
-                pista = "La IA eligió una cuestión sobre observación del cielo.",
-                pregunta = "¿Cuál instrumento ayuda a observar estrellas y planetas?",
-                opciones = listOf("Telescopio", "Microscopio", "Termómetro"),
-                respuestaCorrecta = "Telescopio",
-                recompensa = 15
-            )
+        RetoIA(
+            id = 4,
+            titulo = "Edificio A",
+            dificultad = "Fácil",
+            pista = "Pensá en el área que orienta a los estudiantes.",
+            pregunta = "¿Qué función cumple admisión en una universidad?",
+            opciones = listOf("Orientar a nuevos estudiantes", "Vender comida", "Reparar computadoras"),
+            respuestaCorrecta = "Orientar a nuevos estudiantes",
+            recompensa = 10
         ),
-        "edificioO" to listOf(
-            RetoIA(
-                titulo = "Edificio O",
-                dificultad = "Nivel avanzado",
-                pista = "La IA generó un reto de ingeniería estructural.",
-                pregunta = "¿Qué material suele usarse para dar resistencia a una estructura?",
-                opciones = listOf("Acero", "Papel", "Algodón"),
-                respuestaCorrecta = "Acero",
-                recompensa = 20
-            ),
-            RetoIA(
-                titulo = "Edificio O",
-                dificultad = "Nivel avanzado",
-                pista = "La IA pensó en diseño arquitectónico.",
-                pregunta = "¿Qué elemento ayuda a distribuir cargas en un edificio?",
-                opciones = listOf("Vigas", "Cortinas", "Pintura"),
-                respuestaCorrecta = "Vigas",
-                recompensa = 20
-            ),
-            RetoIA(
-                titulo = "Edificio O",
-                dificultad = "Nivel avanzado",
-                pista = "La IA generó una pregunta de planificación.",
-                pregunta = "¿Qué paso conviene hacer antes de construir?",
-                opciones = listOf("Diseñar planos", "Ignorar medidas", "Empezar sin calcular"),
-                respuestaCorrecta = "Diseñar planos",
-                recompensa = 20
-            )
+        RetoIA(
+            id = 5,
+            titulo = "Edificio A",
+            dificultad = "Fácil",
+            pista = "La información académica debe estar ordenada.",
+            pregunta = "¿Qué área suele manejar datos como matrícula, notas y expedientes?",
+            opciones = listOf("Registro Académico", "Cafetería", "Área deportiva"),
+            respuestaCorrecta = "Registro Académico",
+            recompensa = 10
         ),
-        "edificioK" to listOf(
-            RetoIA(
-                titulo = "Edificio K",
-                dificultad = "Nivel medio",
-                pista = "La IA creó un reto sobre actividad física.",
-                pregunta = "¿Qué acción conviene hacer antes de entrenar?",
-                opciones = listOf("Calentar", "Dormir en el piso", "No moverse"),
-                respuestaCorrecta = "Calentar",
-                recompensa = 15
-            ),
-            RetoIA(
-                titulo = "Edificio K",
-                dificultad = "Nivel medio",
-                pista = "La IA generó una pregunta sobre hidratación.",
-                pregunta = "¿Qué bebida es mejor durante una actividad deportiva?",
-                opciones = listOf("Agua", "Solo gaseosa", "Solo café"),
-                respuestaCorrecta = "Agua",
-                recompensa = 15
-            ),
-            RetoIA(
-                titulo = "Edificio K",
-                dificultad = "Nivel medio",
-                pista = "La IA seleccionó un reto de coordinación.",
-                pregunta = "¿Qué cualidad ayuda más en una disciplina deportiva?",
-                opciones = listOf("Disciplina", "Desorden", "Falta de práctica"),
-                respuestaCorrecta = "Disciplina",
-                recompensa = 15
-            )
+        RetoIA(
+            id = 6,
+            titulo = "Edificio A",
+            dificultad = "Fácil",
+            pista = "El respeto en oficinas facilita los trámites.",
+            pregunta = "¿Qué actitud es correcta al hacer una consulta en una oficina universitaria?",
+            opciones = listOf("Esperar tu turno", "Interrumpir a todos", "Gritar para ser atendido"),
+            respuestaCorrecta = "Esperar tu turno",
+            recompensa = 10
         ),
-        "edificioF" to listOf(
-            RetoIA(
-                titulo = "Edificio F",
-                dificultad = "Nivel avanzado",
-                pista = "La IA creó un reto sobre ciencias jurídicas.",
-                pregunta = "¿Qué documento reúne normas fundamentales de un país?",
-                opciones = listOf("Constitución", "Recibo", "Inventario"),
-                respuestaCorrecta = "Constitución",
-                recompensa = 20
-            ),
-            RetoIA(
-                titulo = "Edificio F",
-                dificultad = "Nivel avanzado",
-                pista = "La IA generó una pregunta sobre convivencia y leyes.",
-                pregunta = "¿Qué acción es correcta si querés resolver un conflicto legal?",
-                opciones = listOf("Buscar asesoría", "Ignorar el problema", "Romper documentos"),
-                respuestaCorrecta = "Buscar asesoría",
-                recompensa = 20
-            ),
-            RetoIA(
-                titulo = "Edificio F",
-                dificultad = "Nivel avanzado",
-                pista = "La IA seleccionó un reto de pensamiento crítico.",
-                pregunta = "¿Qué prueba suele ser importante en un proceso?",
-                opciones = listOf("Evidencia", "Rumor", "Adivinanza"),
-                respuestaCorrecta = "Evidencia",
-                recompensa = 20
-            )
+        RetoIA(
+            id = 7,
+            titulo = "Edificio A",
+            dificultad = "Fácil",
+            pista = "Un buen estudiante confirma su información.",
+            pregunta = "¿Qué deberías hacer si tenés dudas sobre tu matrícula?",
+            opciones = listOf("Consultar en el área correspondiente", "Inventar el horario", "No preguntar nada"),
+            respuestaCorrecta = "Consultar en el área correspondiente",
+            recompensa = 10
         ),
-        "edificioI" to listOf(
-            RetoIA(
-                titulo = "Edificio I",
-                dificultad = "Nivel avanzado",
-                pista = "La IA creó un reto sobre administración y economía.",
-                pregunta = "¿Qué ayuda a controlar ingresos y gastos?",
-                opciones = listOf("Un presupuesto", "Un rumor", "Un cartel"),
-                respuestaCorrecta = "Un presupuesto",
-                recompensa = 25
-            ),
-            RetoIA(
-                titulo = "Edificio I",
-                dificultad = "Nivel avanzado",
-                pista = "La IA generó una pregunta de gestión.",
-                pregunta = "¿Qué acción mejora la organización de una empresa?",
-                opciones = listOf("Planificar", "Improvisar todo", "Ignorar objetivos"),
-                respuestaCorrecta = "Planificar",
-                recompensa = 25
-            ),
-            RetoIA(
-                titulo = "Edificio I",
-                dificultad = "Nivel avanzado",
-                pista = "La IA seleccionó una pregunta sobre economía básica.",
-                pregunta = "¿Cómo se llama el dinero que entra a una organización?",
-                opciones = listOf("Ingreso", "Pérdida", "Deuda"),
-                respuestaCorrecta = "Ingreso",
-                recompensa = 25
-            )
+        RetoIA(
+            id = 8,
+            titulo = "Edificio A",
+            dificultad = "Fácil",
+            pista = "La puntualidad ayuda a evitar problemas.",
+            pregunta = "¿Qué hábito mejora el cumplimiento de trámites universitarios?",
+            opciones = listOf("Llegar a tiempo", "Llegar siempre tarde", "No revisar fechas"),
+            respuestaCorrecta = "Llegar a tiempo",
+            recompensa = 10
+        ),
+        RetoIA(
+            id = 9,
+            titulo = "Edificio A",
+            dificultad = "Fácil",
+            pista = "La comunicación clara evita confusiones.",
+            pregunta = "¿Qué conviene hacer antes de entregar un documento?",
+            opciones = listOf("Revisar que esté completo", "Entregar hojas vacías", "No leer nada"),
+            respuestaCorrecta = "Revisar que esté completo",
+            recompensa = 10
+        ),
+
+        // 8 preguntas medias
+        RetoIA(
+            id = 10,
+            titulo = "Edificio A",
+            dificultad = "Media",
+            pista = "Relacioná el trámite con el área correcta.",
+            pregunta = "Si un estudiante necesita confirmar sus asignaturas inscritas, ¿a qué área debería acudir?",
+            opciones = listOf("Registro Académico", "Área deportiva", "Odontología"),
+            respuestaCorrecta = "Registro Académico",
+            recompensa = 15
+        ),
+        RetoIA(
+            id = 11,
+            titulo = "Edificio A",
+            dificultad = "Media",
+            pista = "Pensá en el proceso de ingreso a la universidad.",
+            pregunta = "¿Qué proceso está más relacionado con el área de admisión?",
+            opciones = listOf("Ingreso de nuevos estudiantes", "Entrenamiento deportivo", "Atención dental"),
+            respuestaCorrecta = "Ingreso de nuevos estudiantes",
+            recompensa = 15
+        ),
+        RetoIA(
+            id = 12,
+            titulo = "Edificio A",
+            dificultad = "Media",
+            pista = "Un expediente académico contiene información importante.",
+            pregunta = "¿Cuál de estos datos puede formar parte de un expediente académico?",
+            opciones = listOf("Historial de notas", "Lista de compras", "Rutina de gimnasio"),
+            respuestaCorrecta = "Historial de notas",
+            recompensa = 15
+        ),
+        RetoIA(
+            id = 13,
+            titulo = "Edificio A",
+            dificultad = "Media",
+            pista = "Producción audiovisual trabaja con contenido visual y sonoro.",
+            pregunta = "¿Qué actividad se relaciona más con producción audiovisual?",
+            opciones = listOf("Grabar y editar videos", "Realizar cirugías", "Llevar inventario de alimentos"),
+            respuestaCorrecta = "Grabar y editar videos",
+            recompensa = 15
+        ),
+        RetoIA(
+            id = 14,
+            titulo = "Edificio A",
+            dificultad = "Media",
+            pista = "Pensá en el orden lógico de un trámite.",
+            pregunta = "¿Qué deberías hacer primero si necesitás resolver un problema con tu inscripción?",
+            opciones = listOf("Verificar la información y consultar", "Cambiar datos sin permiso", "Ignorar el problema"),
+            respuestaCorrecta = "Verificar la información y consultar",
+            recompensa = 15
+        ),
+        RetoIA(
+            id = 15,
+            titulo = "Edificio A",
+            dificultad = "Media",
+            pista = "Las fechas importantes deben revisarse con anticipación.",
+            pregunta = "¿Por qué es importante revisar el calendario académico?",
+            opciones = listOf("Para conocer fechas de matrícula y evaluaciones", "Para decorar el celular", "Para evitar estudiar siempre"),
+            respuestaCorrecta = "Para conocer fechas de matrícula y evaluaciones",
+            recompensa = 15
+        ),
+        RetoIA(
+            id = 16,
+            titulo = "Edificio A",
+            dificultad = "Media",
+            pista = "En un video, imagen y sonido deben cuidarse.",
+            pregunta = "¿Qué elemento es importante en una producción audiovisual universitaria?",
+            opciones = listOf("Buena calidad de audio", "Ruido excesivo", "Imagen completamente oscura"),
+            respuestaCorrecta = "Buena calidad de audio",
+            recompensa = 15
+        ),
+        RetoIA(
+            id = 17,
+            titulo = "Edificio A",
+            dificultad = "Media",
+            pista = "Pensá en una forma responsable de manejar información.",
+            pregunta = "¿Qué se debe hacer con la información académica personal?",
+            opciones = listOf("Cuidarla y no compartirla sin necesidad", "Publicarla en cualquier lugar", "Regalarla a desconocidos"),
+            respuestaCorrecta = "Cuidarla y no compartirla sin necesidad",
+            recompensa = 15
+        ),
+
+        // 8 preguntas difíciles
+        RetoIA(
+            id = 18,
+            titulo = "Edificio A",
+            dificultad = "Difícil",
+            pista = "Analizá qué opción muestra mejor orden y responsabilidad.",
+            pregunta = "Un estudiante detecta que una asignatura no aparece en su matrícula. ¿Cuál sería la mejor acción?",
+            opciones = listOf("Revisar su comprobante y consultar en Registro Académico", "No hacer nada", "Borrar todas sus asignaturas"),
+            respuestaCorrecta = "Revisar su comprobante y consultar en Registro Académico",
+            recompensa = 20
+        ),
+        RetoIA(
+            id = 19,
+            titulo = "Edificio A",
+            dificultad = "Difícil",
+            pista = "Pensá en la función de cada área.",
+            pregunta = "¿Cuál combinación representa mejor las funciones del Edificio A?",
+            opciones = listOf("Admisión, registro académico y producción audiovisual", "Medicina, odontología y deporte", "Biblioteca, cafetería y parqueo"),
+            respuestaCorrecta = "Admisión, registro académico y producción audiovisual",
+            recompensa = 20
+        ),
+        RetoIA(
+            id = 20,
+            titulo = "Edificio A",
+            dificultad = "Difícil",
+            pista = "La producción audiovisual requiere planificación.",
+            pregunta = "¿Qué paso debería realizarse antes de grabar un video institucional?",
+            opciones = listOf("Planificar el guion y los recursos", "Grabar sin idea previa", "Ignorar el objetivo del video"),
+            respuestaCorrecta = "Planificar el guion y los recursos",
+            recompensa = 20
+        ),
+        RetoIA(
+            id = 21,
+            titulo = "Edificio A",
+            dificultad = "Difícil",
+            pista = "Pensá en la importancia de los documentos oficiales.",
+            pregunta = "¿Por qué un comprobante de matrícula puede ser importante?",
+            opciones = listOf("Porque respalda las asignaturas inscritas", "Porque reemplaza todos los exámenes", "Porque permite faltar a clases"),
+            respuestaCorrecta = "Porque respalda las asignaturas inscritas",
+            recompensa = 20
+        ),
+        RetoIA(
+            id = 22,
+            titulo = "Edificio A",
+            dificultad = "Difícil",
+            pista = "Analizá qué acción evita errores futuros.",
+            pregunta = "Si un estudiante cambia de grupo o asignatura, ¿qué debe verificar después?",
+            opciones = listOf("Que el cambio aparezca correctamente en su registro", "Que nadie se entere", "Que el horario quede incompleto"),
+            respuestaCorrecta = "Que el cambio aparezca correctamente en su registro",
+            recompensa = 20
+        ),
+        RetoIA(
+            id = 23,
+            titulo = "Edificio A",
+            dificultad = "Difícil",
+            pista = "La comunicación institucional debe ser clara.",
+            pregunta = "¿Qué característica debe tener un video informativo para estudiantes?",
+            opciones = listOf("Mensaje claro y fácil de entender", "Información confusa", "Audio imposible de escuchar"),
+            respuestaCorrecta = "Mensaje claro y fácil de entender",
+            recompensa = 20
+        ),
+        RetoIA(
+            id = 24,
+            titulo = "Edificio A",
+            dificultad = "Difícil",
+            pista = "Pensá en una decisión responsable ante un error académico.",
+            pregunta = "Si un estudiante nota un error en sus datos personales, ¿qué debería hacer?",
+            opciones = listOf("Solicitar corrección en el área correspondiente", "Dejar el error para siempre", "Cambiarlo de forma informal"),
+            respuestaCorrecta = "Solicitar corrección en el área correspondiente",
+            recompensa = 20
+        ),
+        RetoIA(
+            id = 25,
+            titulo = "Edificio A",
+            dificultad = "Difícil",
+            pista = "Relacioná tecnología, comunicación y universidad.",
+            pregunta = "¿Cuál sería un uso adecuado de producción audiovisual dentro de la universidad?",
+            opciones = listOf("Crear material informativo para la comunidad estudiantil", "Crear desorden en clases", "Ocultar información académica"),
+            respuestaCorrecta = "Crear material informativo para la comunidad estudiantil",
+            recompensa = 20
         )
     )
+}
 
-    val listaRetos = retosPorNivel[nivel] ?: retosPorNivel.getValue("edificioA")
-    val retoElegido = listaRetos[numeroNivel % listaRetos.size]
+fun generarRetoIA(
+    nivel: String,
+    numeroNivel: Int,
+    preguntasUsadas: List<Int>
+): RetoIA {
+    val bancoPreguntas = when (nivel) {
+        "edificioA" -> preguntasEdificioA()
+        else -> preguntasEdificioA()
+    }
+
+    val dificultadNivel = obtenerDificultadPorNivel(numeroNivel)
+
+    val preguntasDisponibles = bancoPreguntas.filter {
+        it.dificultad == dificultadNivel && !preguntasUsadas.contains(it.id)
+    }
+
+    val preguntasRespaldo = bancoPreguntas.filter {
+        it.dificultad == dificultadNivel
+    }
+
+    val retoElegido = if (preguntasDisponibles.isNotEmpty()) {
+        preguntasDisponibles.random()
+    } else {
+        preguntasRespaldo.random()
+    }
 
     return retoElegido.copy(
         opciones = retoElegido.opciones.shuffled()
@@ -288,6 +344,8 @@ fun PantallaReto(
     numeroNivel: Int,
     totalNivelesEdificio: Int = 10,
     mostrarSiguienteNivel: Boolean,
+    preguntasUsadas: List<Int>,
+    onPreguntaUsada: (Int) -> Unit,
     onCorrecto: (Int) -> Unit,
     onIncorrecto: () -> Unit,
     onVolverANiveles: () -> Unit,
@@ -303,8 +361,12 @@ fun PantallaReto(
     val verdeCorrecto = Color(0xFF2E7D32)
     val rojoIncorrecto = Color(0xFFC62828)
 
-    val reto = remember(nivel, numeroNivel) {
-        generarRetoIA(nivel, numeroNivel)
+    val reto = remember(nivel, numeroNivel, preguntasUsadas.joinToString()) {
+        generarRetoIA(
+            nivel = nivel,
+            numeroNivel = numeroNivel,
+            preguntasUsadas = preguntasUsadas
+        )
     }
 
     val progresoEdificio = ((numeroNivel + 1).toFloat() / totalNivelesEdificio.toFloat())
@@ -313,13 +375,13 @@ fun PantallaReto(
     var opcionSeleccionada by remember { mutableStateOf<String?>(null) }
     var respuestaCorrecta by remember { mutableStateOf<Boolean?>(null) }
     var botonesHabilitados by remember { mutableStateOf(true) }
-    var mostrarResultados by remember { mutableStateOf(false) }
+    var mostrarResultado by remember { mutableStateOf(false) }
 
     LaunchedEffect(nivel, numeroNivel) {
         opcionSeleccionada = null
         respuestaCorrecta = null
         botonesHabilitados = true
-        mostrarResultados = false
+        mostrarResultado = false
     }
 
     Box(
@@ -346,7 +408,7 @@ fun PantallaReto(
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = "Reto generado por IA",
+                text = "Reto del edificio",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = celesteOscuro
@@ -409,7 +471,7 @@ fun PantallaReto(
                         .padding(22.dp)
                 ) {
                     Text(
-                        text = "Pista inteligente",
+                        text = "Pista del nivel",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = textoPrincipal
@@ -464,7 +526,7 @@ fun PantallaReto(
 
                     Spacer(modifier = Modifier.height(22.dp))
 
-                        reto.opciones.forEach { opcion ->
+                    reto.opciones.forEach { opcion ->
                         val seleccionada = opcionSeleccionada == opcion
                         val yaRespondio = opcionSeleccionada != null
 
@@ -473,8 +535,7 @@ fun PantallaReto(
                                 if (!yaRespondio) {
                                     opcionSeleccionada = opcion
                                     respuestaCorrecta = opcion == reto.respuestaCorrecta
-                                    // mostrar inmediatamente el mensaje y los botones internos
-                                    mostrarResultados = true
+                                    mostrarResultado = true
                                 }
                             },
                             modifier = Modifier
@@ -511,13 +572,13 @@ fun PantallaReto(
                         Spacer(modifier = Modifier.height(10.dp))
                     }
 
-                        if (mostrarResultados) {
+                    if (mostrarResultado) {
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Text(
                             text = if (respuestaCorrecta == true) {
                                 if (mostrarSiguienteNivel) {
-                                    "¡Correcto! Ganaste ${reto.recompensa} puntos y avanzás en el juego."
+                                    "¡Correcto! Ganaste ${reto.recompensa} puntos y avanzás en el edificio."
                                 } else {
                                     "¡Correcto! Ganaste ${reto.recompensa} puntos y completaste este edificio."
                                 }
@@ -534,17 +595,15 @@ fun PantallaReto(
                         Spacer(modifier = Modifier.height(18.dp))
 
                         if (respuestaCorrecta == true) {
-                            // Mostrar dos opciones cuando la respuesta es correcta:
-                            // - Volver a niveles (o "volver al edificio")
-                            // - Siguiente nivel
                             Column(modifier = Modifier.fillMaxWidth()) {
+
                                 Button(
                                     onClick = {
                                         if (!botonesHabilitados) return@Button
+
                                         botonesHabilitados = false
-                                        // Primero aplicar la recompensa / lógica de correcto
+                                        onPreguntaUsada(reto.id)
                                         onCorrecto(reto.recompensa)
-                                        // Luego navegar a la pantalla de niveles
                                         onVolverANiveles()
                                     },
                                     modifier = Modifier
@@ -569,8 +628,9 @@ fun PantallaReto(
                                     Button(
                                         onClick = {
                                             if (!botonesHabilitados) return@Button
+
                                             botonesHabilitados = false
-                                            // Aplicar recompensa y avanzar al siguiente nivel dentro del mismo edificio
+                                            onPreguntaUsada(reto.id)
                                             onCorrecto(reto.recompensa)
                                             onSiguienteNivel()
                                         },
@@ -592,11 +652,12 @@ fun PantallaReto(
                                 }
                             }
                         } else {
-                            // Respuesta incorrecta: mantener la lógica previa
                             Button(
                                 onClick = {
                                     if (!botonesHabilitados) return@Button
+
                                     botonesHabilitados = false
+                                    onPreguntaUsada(reto.id)
                                     onIncorrecto()
                                 },
                                 modifier = Modifier
@@ -621,7 +682,6 @@ fun PantallaReto(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Ocultar el botón inferior cuando ya se mostró la respuesta (y los botones internos)
             if (respuestaCorrecta == null) {
                 OutlinedButton(
                     onClick = onBack,

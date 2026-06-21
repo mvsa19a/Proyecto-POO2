@@ -21,6 +21,7 @@ class MainActivity : ComponentActivity() {
             ProyectoFINALTheme {
 
                 val pantallaActual = remember { mutableStateOf("inicio") }
+
                 val edificios = listOf(
                     EdificioInfo("edificioA", "Edificio A", "Admisión, Registro Académico y Producción Audiovisual"),
                     EdificioInfo("edificioE", "Edificio E", "Medicina"),
@@ -31,14 +32,21 @@ class MainActivity : ComponentActivity() {
                     EdificioInfo("edificioF", "Edificio F", "Ciencias Jurídicas"),
                     EdificioInfo("edificioI", "Edificio I", "Ciencias Comerciales, Administrativas y Económicas")
                 )
+
                 val ordenEdificios = edificios.map { it.codigo }
 
                 var puntos by remember { mutableStateOf(0) }
                 var vidas by remember { mutableStateOf(3) }
+
                 var nivelSeleccionado by remember { mutableStateOf("edificioA") }
                 var nivelPreguntaActual by remember { mutableStateOf(0) }
                 var edificioSeleccionado by remember { mutableStateOf("edificioA") }
+
                 val progresoPorEdificio = remember { mutableStateMapOf<String, Int>() }
+
+                // Aquí se guardan las preguntas que ya salieron por edificio
+                val preguntasUsadasPorEdificio = remember { mutableStateMapOf<String, List<Int>>() }
+
                 val totalNivelesEdificio = 10
 
                 var edificiosDesbloqueados by remember { mutableStateOf(1) }
@@ -79,8 +87,10 @@ class MainActivity : ComponentActivity() {
 
                         onEdificioSeleccionado = { edificio ->
                             edificioSeleccionado = edificio
+
                             nivelPreguntaActual = (progresoPorEdificio[edificio] ?: 0)
                                 .coerceIn(0, totalNivelesEdificio - 1)
+
                             pantallaActual.value = "nivelesEdificio"
                         },
 
@@ -100,11 +110,13 @@ class MainActivity : ComponentActivity() {
                             progresoActual = (progresoPorEdificio[edificioSeleccionado] ?: 0)
                                 .coerceIn(0, totalNivelesEdificio),
                             totalNiveles = totalNivelesEdificio,
+
                             onNivelSeleccionado = { nivel ->
                                 nivelPreguntaActual = nivel
                                 nivelSeleccionado = edificioSeleccionado
                                 pantallaActual.value = "reto"
                             },
+
                             onBack = {
                                 pantallaActual.value = "niveles"
                             }
@@ -117,7 +129,7 @@ class MainActivity : ComponentActivity() {
                             pantallaActual.value = "reto"
                         },
                         onBack = {
-                            pantallaActual.value = "niveles"
+                            pantallaActual.value = "nivelesEdificio"
                         }
                     )
 
@@ -127,9 +139,22 @@ class MainActivity : ComponentActivity() {
                         totalNivelesEdificio = totalNivelesEdificio,
                         mostrarSiguienteNivel = nivelPreguntaActual < totalNivelesEdificio - 1,
 
+                        preguntasUsadas = preguntasUsadasPorEdificio[nivelSeleccionado] ?: emptyList(),
+
+                        onPreguntaUsada = { idPregunta ->
+                            val preguntasActuales = preguntasUsadasPorEdificio[nivelSeleccionado]
+                                ?.toMutableList()
+                                ?: mutableListOf()
+
+                            if (!preguntasActuales.contains(idPregunta)) {
+                                preguntasActuales.add(idPregunta)
+                                preguntasUsadasPorEdificio[nivelSeleccionado] = preguntasActuales
+                            }
+                        },
+
                         onCorrecto = { recompensa ->
-                            // Aplicar puntos y guardar el siguiente nivel disponible dentro del mismo edificio.
                             puntos += recompensa
+
                             progresoPorEdificio[nivelSeleccionado] = (nivelPreguntaActual + 1)
                                 .coerceAtMost(totalNivelesEdificio)
 
@@ -139,7 +164,10 @@ class MainActivity : ComponentActivity() {
                                 val indiceSeleccionado = ordenEdificios.indexOf(nivelSeleccionado)
                                 val ultimoDesbloqueado = edificiosDesbloqueados - 1
 
-                                if (indiceSeleccionado == ultimoDesbloqueado && edificiosDesbloqueados < ordenEdificios.size) {
+                                if (
+                                    indiceSeleccionado == ultimoDesbloqueado &&
+                                    edificiosDesbloqueados < ordenEdificios.size
+                                ) {
                                     edificiosDesbloqueados++
                                 }
                             }
