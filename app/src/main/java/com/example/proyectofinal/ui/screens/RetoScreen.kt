@@ -2188,14 +2188,14 @@ fun PantallaReto(
     val verdeCorrecto = Color(0xFF2E7D32)
     val rojoIncorrecto = Color(0xFFC62828)
 
-    val reto = remember(nivel, numeroNivel, preguntasUsadas.joinToString()) {
+    val preguntasKey = preguntasUsadas.joinToString()
+    val reto = remember(nivel, numeroNivel, preguntasKey) {
         generarRetoIA(
             nivel = nivel,
             numeroNivel = numeroNivel,
             preguntasUsadas = preguntasUsadas
         )
     }
-
     val progresoEdificio = ((numeroNivel + 1).toFloat() / totalNivelesEdificio.toFloat())
         .coerceIn(0f, 1f)
 
@@ -2204,7 +2204,7 @@ fun PantallaReto(
     var botonesHabilitados by remember { mutableStateOf(true) }
     var mostrarResultado by remember { mutableStateOf(false) }
 
-    LaunchedEffect(nivel, numeroNivel) {
+    LaunchedEffect(nivel, numeroNivel, preguntasKey) {
         opcionSeleccionada = null
         respuestaCorrecta = null
         botonesHabilitados = true

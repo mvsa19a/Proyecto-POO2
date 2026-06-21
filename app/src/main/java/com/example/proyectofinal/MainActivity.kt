@@ -6,6 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
 import com.example.proyectofinal.ui.screens.*
 import com.example.proyectofinal.ui.theme.ProyectoFINALTheme
+import com.example.proyectofinal.network.ActualizarJugadorRequest
+import com.example.proyectofinal.network.ActualizarProgresoRequest
+import com.example.proyectofinal.network.RetrofitClient
+import kotlinx.coroutines.launch
 
 data class EdificioInfo(
     val codigo: String,
@@ -21,6 +25,8 @@ class MainActivity : ComponentActivity() {
             ProyectoFINALTheme {
 
                 val pantallaActual = remember { mutableStateOf("inicio") }
+                val scope = rememberCoroutineScope()
+                val idJugador = 1
 
                 val edificios = listOf(
                     EdificioInfo("edificioA", "Edificio A", "Admisión, Registro Académico y Producción Audiovisual"),
@@ -50,6 +56,22 @@ class MainActivity : ComponentActivity() {
                 val totalNivelesEdificio = 10
 
                 var edificiosDesbloqueados by remember { mutableStateOf(1) }
+                LaunchedEffect(Unit) {
+                    try {
+                        val respuesta = RetrofitClient.api.obtenerJugador(idJugador)
+
+                        puntos = respuesta.jugador.puntos
+                        vidas = respuesta.jugador.vidas
+                        edificiosDesbloqueados = respuesta.jugador.edificiosDesbloqueados
+
+                        respuesta.progreso.forEach { progreso ->
+                            progresoPorEdificio[progreso.codigoEdificio] = progreso.nivelActual
+                        }
+
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
 
                 when (pantallaActual.value) {
 
@@ -155,8 +177,10 @@ class MainActivity : ComponentActivity() {
                         onCorrecto = { recompensa ->
                             puntos += recompensa
 
-                            progresoPorEdificio[nivelSeleccionado] = (nivelPreguntaActual + 1)
+                            val nuevoProgreso = (nivelPreguntaActual + 1)
                                 .coerceAtMost(totalNivelesEdificio)
+
+                            progresoPorEdificio[nivelSeleccionado] = nuevoProgreso
 
                             val esUltimoNivelDelEdificio = nivelPreguntaActual >= totalNivelesEdificio - 1
 
@@ -171,14 +195,83 @@ class MainActivity : ComponentActivity() {
                                     edificiosDesbloqueados++
                                 }
                             }
+
+                            scope.launch {
+                                try {
+                                    RetrofitClient.api.actualizarJugador(
+                                        id = idJugador,
+                                        datos = ActualizarJugadorRequest(
+                                            puntos = puntos,
+                                            vidas = vidas,
+                                            edificiosDesbloqueados = edificiosDesbloqueados
+                                        )
+                                    )
+
+                                    RetrofitClient.api.actualizarProgreso(
+                                        idJugador = idJugador,
+                                        codigoEdificio = nivelSeleccionado,
+                                        datos = ActualizarProgresoRequest(
+                                            nivelActual = nuevoProgreso,
+                                            completado = nuevoProgreso >= totalNivelesEdificio
+                                        )
+                                    )
+
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
                         },
 
                         onIncorrecto = {
-                            if (vidas > 0) {
-                                vidas--
-                            }
+                            vidas--
 
-                            pantallaActual.value = "nivelesEdificio"
+                            if (vidas <= 0) {
+                                vidas = 3
+
+                                preguntasUsadasPorEdificio.remove(nivelSeleccionado)
+                                progresoPorEdificio[nivelSeleccionado] = 0
+                                nivelPreguntaActual = 0
+                                edificioSeleccionado = nivelSeleccionado
+
+                                pantallaActual.value = "nivelesEdificio"
+
+                                scope.launch {
+                                    try {
+                                        RetrofitClient.api.reiniciarEdificio(
+                                            idJugador = idJugador,
+                                            codigoEdificio = nivelSeleccionado
+                                        )
+
+                                        RetrofitClient.api.actualizarJugador(
+                                            id = idJugador,
+                                            datos = ActualizarJugadorRequest(
+                                                puntos = puntos,
+                                                vidas = vidas,
+                                                edificiosDesbloqueados = edificiosDesbloqueados
+                                            )
+                                        )
+
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                }
+
+                            } else {
+                                scope.launch {
+                                    try {
+                                        RetrofitClient.api.actualizarJugador(
+                                            id = idJugador,
+                                            datos = ActualizarJugadorRequest(
+                                                puntos = puntos,
+                                                vidas = vidas,
+                                                edificiosDesbloqueados = edificiosDesbloqueados
+                                            )
+                                        )
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                }
+                            }
                         },
 
                         onVolverANiveles = {
