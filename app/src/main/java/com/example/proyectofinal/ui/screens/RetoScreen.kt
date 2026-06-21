@@ -3,14 +3,18 @@ package com.example.proyectofinal.ui.screens
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
@@ -34,69 +38,244 @@ data class RetoIA(
     val recompensa: Int
 )
 
-fun generarRetoIA(nivel: String): RetoIA {
-    val retosEdificioA = listOf(
-        RetoIA(
-            titulo = "Edificio A",
-            dificultad = "Nivel básico",
-            pista = "La IA generó una pista de orientación para iniciar tu recorrido.",
-            pregunta = "¿Qué acción te ayuda más a prepararte antes de una clase importante?",
-            opciones = listOf("Revisar tus materiales", "Llegar tarde", "No llevar cuaderno"),
-            respuestaCorrecta = "Revisar tus materiales",
-            recompensa = 10
+fun generarRetoIA(nivel: String, numeroNivel: Int): RetoIA {
+    val retosPorNivel = mapOf(
+        "edificioA" to listOf(
+            RetoIA(
+                titulo = "Edificio A",
+                dificultad = "Nivel básico",
+                pista = "La IA generó una pista de orientación para iniciar tu recorrido.",
+                pregunta = "¿Qué acción te ayuda más a prepararte antes de una clase importante?",
+                opciones = listOf("Revisar tus materiales", "Llegar tarde", "No llevar cuaderno"),
+                respuestaCorrecta = "Revisar tus materiales",
+                recompensa = 10
+            ),
+            RetoIA(
+                titulo = "Edificio A",
+                dificultad = "Nivel básico",
+                pista = "La IA seleccionó un reto rápido sobre hábitos universitarios.",
+                pregunta = "¿Cuál es un hábito saludable para mantener energía durante el día?",
+                opciones = listOf("Tomar agua", "No dormir", "Saltarse comidas"),
+                respuestaCorrecta = "Tomar agua",
+                recompensa = 10
+            ),
+            RetoIA(
+                titulo = "Edificio A",
+                dificultad = "Nivel básico",
+                pista = "La IA detectó una pregunta sencilla de lógica.",
+                pregunta = "Si encontrás 3 pistas y luego descubrís 2 más, ¿cuántas pistas tenés?",
+                opciones = listOf("5 pistas", "3 pistas", "6 pistas"),
+                respuestaCorrecta = "5 pistas",
+                recompensa = 10
+            )
         ),
-        RetoIA(
-            titulo = "Edificio A",
-            dificultad = "Nivel básico",
-            pista = "La IA seleccionó un reto rápido sobre hábitos universitarios.",
-            pregunta = "¿Cuál es un hábito saludable para mantener energía durante el día?",
-            opciones = listOf("Tomar agua", "No dormir", "Saltarse comidas"),
-            respuestaCorrecta = "Tomar agua",
-            recompensa = 10
+        "edificioE" to listOf(
+            RetoIA(
+                titulo = "Edificio E",
+                dificultad = "Nivel medio",
+                pista = "La IA creó un reto sobre bienestar y salud.",
+                pregunta = "¿Qué práctica ayuda a prevenir enfermedades en un entorno universitario?",
+                opciones = listOf("Lavarse las manos", "Compartir vasos", "Ignorar síntomas"),
+                respuestaCorrecta = "Lavarse las manos",
+                recompensa = 15
+            ),
+            RetoIA(
+                titulo = "Edificio E",
+                dificultad = "Nivel medio",
+                pista = "La IA generó una pregunta sobre atención básica.",
+                pregunta = "Si alguien se desmaya, ¿qué deberías hacer primero?",
+                opciones = listOf("Pedir ayuda", "Moverlo rápido", "Dejarlo solo"),
+                respuestaCorrecta = "Pedir ayuda",
+                recompensa = 15
+            ),
+            RetoIA(
+                titulo = "Edificio E",
+                dificultad = "Nivel medio",
+                pista = "La IA seleccionó un reto sobre hábitos saludables.",
+                pregunta = "¿Cuál de estas opciones apoya mejor una buena salud?",
+                opciones = listOf("Dormir bien", "Saltarse el descanso", "Beber solo refresco"),
+                respuestaCorrecta = "Dormir bien",
+                recompensa = 15
+            )
         ),
-        RetoIA(
-            titulo = "Edificio A",
-            dificultad = "Nivel básico",
-            pista = "La IA detectó una pregunta sencilla de lógica.",
-            pregunta = "Si encontrás 3 pistas y luego descubrís 2 más, ¿cuántas pistas tenés?",
-            opciones = listOf("5 pistas", "3 pistas", "6 pistas"),
-            respuestaCorrecta = "5 pistas",
-            recompensa = 10
+        "edificioJ" to listOf(
+            RetoIA(
+                titulo = "Edificio J",
+                dificultad = "Nivel medio",
+                pista = "La IA pensó en cuidado dental preventivo.",
+                pregunta = "¿Cuántas veces al día se recomienda cepillarse los dientes?",
+                opciones = listOf("2 veces", "1 vez al mes", "5 veces"),
+                respuestaCorrecta = "2 veces",
+                recompensa = 15
+            ),
+            RetoIA(
+                titulo = "Edificio J",
+                dificultad = "Nivel medio",
+                pista = "La IA generó un reto sobre higiene bucal.",
+                pregunta = "¿Qué elemento ayuda a limpiar entre los dientes?",
+                opciones = listOf("Hilo dental", "Papel", "Cinta adhesiva"),
+                respuestaCorrecta = "Hilo dental",
+                recompensa = 15
+            ),
+            RetoIA(
+                titulo = "Edificio J",
+                dificultad = "Nivel medio",
+                pista = "La IA seleccionó una pregunta sobre alimentación y dientes.",
+                pregunta = "¿Qué alimento conviene limitar para cuidar el esmalte dental?",
+                opciones = listOf("Azúcar en exceso", "Agua", "Verduras"),
+                respuestaCorrecta = "Azúcar en exceso",
+                recompensa = 15
+            )
+        ),
+        "edificioP" to listOf(
+            RetoIA(
+                titulo = "Edificio P",
+                dificultad = "Nivel medio",
+                pista = "La IA creó un reto inspirado en Copérnico.",
+                pregunta = "¿Qué modelo defendió Copérnico?",
+                opciones = listOf("Heliocéntrico", "Geocéntrico", "Lunar"),
+                respuestaCorrecta = "Heliocéntrico",
+                recompensa = 15
+            ),
+            RetoIA(
+                titulo = "Edificio P",
+                dificultad = "Nivel medio",
+                pista = "La IA generó una pregunta astronómica.",
+                pregunta = "¿Qué cuerpo celeste gira alrededor de la Tierra?",
+                opciones = listOf("La Luna", "El Sol", "Marte"),
+                respuestaCorrecta = "La Luna",
+                recompensa = 15
+            ),
+            RetoIA(
+                titulo = "Edificio P",
+                dificultad = "Nivel medio",
+                pista = "La IA eligió una cuestión sobre observación del cielo.",
+                pregunta = "¿Cuál instrumento ayuda a observar estrellas y planetas?",
+                opciones = listOf("Telescopio", "Microscopio", "Termómetro"),
+                respuestaCorrecta = "Telescopio",
+                recompensa = 15
+            )
+        ),
+        "edificioO" to listOf(
+            RetoIA(
+                titulo = "Edificio O",
+                dificultad = "Nivel avanzado",
+                pista = "La IA generó un reto de ingeniería estructural.",
+                pregunta = "¿Qué material suele usarse para dar resistencia a una estructura?",
+                opciones = listOf("Acero", "Papel", "Algodón"),
+                respuestaCorrecta = "Acero",
+                recompensa = 20
+            ),
+            RetoIA(
+                titulo = "Edificio O",
+                dificultad = "Nivel avanzado",
+                pista = "La IA pensó en diseño arquitectónico.",
+                pregunta = "¿Qué elemento ayuda a distribuir cargas en un edificio?",
+                opciones = listOf("Vigas", "Cortinas", "Pintura"),
+                respuestaCorrecta = "Vigas",
+                recompensa = 20
+            ),
+            RetoIA(
+                titulo = "Edificio O",
+                dificultad = "Nivel avanzado",
+                pista = "La IA generó una pregunta de planificación.",
+                pregunta = "¿Qué paso conviene hacer antes de construir?",
+                opciones = listOf("Diseñar planos", "Ignorar medidas", "Empezar sin calcular"),
+                respuestaCorrecta = "Diseñar planos",
+                recompensa = 20
+            )
+        ),
+        "edificioK" to listOf(
+            RetoIA(
+                titulo = "Edificio K",
+                dificultad = "Nivel medio",
+                pista = "La IA creó un reto sobre actividad física.",
+                pregunta = "¿Qué acción conviene hacer antes de entrenar?",
+                opciones = listOf("Calentar", "Dormir en el piso", "No moverse"),
+                respuestaCorrecta = "Calentar",
+                recompensa = 15
+            ),
+            RetoIA(
+                titulo = "Edificio K",
+                dificultad = "Nivel medio",
+                pista = "La IA generó una pregunta sobre hidratación.",
+                pregunta = "¿Qué bebida es mejor durante una actividad deportiva?",
+                opciones = listOf("Agua", "Solo gaseosa", "Solo café"),
+                respuestaCorrecta = "Agua",
+                recompensa = 15
+            ),
+            RetoIA(
+                titulo = "Edificio K",
+                dificultad = "Nivel medio",
+                pista = "La IA seleccionó un reto de coordinación.",
+                pregunta = "¿Qué cualidad ayuda más en una disciplina deportiva?",
+                opciones = listOf("Disciplina", "Desorden", "Falta de práctica"),
+                respuestaCorrecta = "Disciplina",
+                recompensa = 15
+            )
+        ),
+        "edificioF" to listOf(
+            RetoIA(
+                titulo = "Edificio F",
+                dificultad = "Nivel avanzado",
+                pista = "La IA creó un reto sobre ciencias jurídicas.",
+                pregunta = "¿Qué documento reúne normas fundamentales de un país?",
+                opciones = listOf("Constitución", "Recibo", "Inventario"),
+                respuestaCorrecta = "Constitución",
+                recompensa = 20
+            ),
+            RetoIA(
+                titulo = "Edificio F",
+                dificultad = "Nivel avanzado",
+                pista = "La IA generó una pregunta sobre convivencia y leyes.",
+                pregunta = "¿Qué acción es correcta si querés resolver un conflicto legal?",
+                opciones = listOf("Buscar asesoría", "Ignorar el problema", "Romper documentos"),
+                respuestaCorrecta = "Buscar asesoría",
+                recompensa = 20
+            ),
+            RetoIA(
+                titulo = "Edificio F",
+                dificultad = "Nivel avanzado",
+                pista = "La IA seleccionó un reto de pensamiento crítico.",
+                pregunta = "¿Qué prueba suele ser importante en un proceso?",
+                opciones = listOf("Evidencia", "Rumor", "Adivinanza"),
+                respuestaCorrecta = "Evidencia",
+                recompensa = 20
+            )
+        ),
+        "edificioI" to listOf(
+            RetoIA(
+                titulo = "Edificio I",
+                dificultad = "Nivel avanzado",
+                pista = "La IA creó un reto sobre administración y economía.",
+                pregunta = "¿Qué ayuda a controlar ingresos y gastos?",
+                opciones = listOf("Un presupuesto", "Un rumor", "Un cartel"),
+                respuestaCorrecta = "Un presupuesto",
+                recompensa = 25
+            ),
+            RetoIA(
+                titulo = "Edificio I",
+                dificultad = "Nivel avanzado",
+                pista = "La IA generó una pregunta de gestión.",
+                pregunta = "¿Qué acción mejora la organización de una empresa?",
+                opciones = listOf("Planificar", "Improvisar todo", "Ignorar objetivos"),
+                respuestaCorrecta = "Planificar",
+                recompensa = 25
+            ),
+            RetoIA(
+                titulo = "Edificio I",
+                dificultad = "Nivel avanzado",
+                pista = "La IA seleccionó una pregunta sobre economía básica.",
+                pregunta = "¿Cómo se llama el dinero que entra a una organización?",
+                opciones = listOf("Ingreso", "Pérdida", "Deuda"),
+                respuestaCorrecta = "Ingreso",
+                recompensa = 25
+            )
         )
     )
 
-    val retosBiblioteca = listOf(
-        RetoIA(
-            titulo = "Biblioteca Central",
-            dificultad = "Nivel avanzado",
-            pista = "La IA creó un reto matemático usando salas de estudio.",
-            pregunta = "Si cada sala tiene 4 mesas y cada mesa tiene 3 pistas, ¿cuántas pistas hay en 5 salas?",
-            opciones = listOf("60 pistas", "35 pistas", "45 pistas"),
-            respuestaCorrecta = "60 pistas",
-            recompensa = 20
-        ),
-        RetoIA(
-            titulo = "Biblioteca Central",
-            dificultad = "Nivel avanzado",
-            pista = "La IA generó un reto de comportamiento dentro de la biblioteca.",
-            pregunta = "¿Qué acción es más adecuada dentro de una biblioteca universitaria?",
-            opciones = listOf("Guardar silencio", "Hablar fuerte", "Correr entre pasillos"),
-            respuestaCorrecta = "Guardar silencio",
-            recompensa = 20
-        ),
-        RetoIA(
-            titulo = "Biblioteca Central",
-            dificultad = "Nivel avanzado",
-            pista = "La IA seleccionó una pregunta de razonamiento.",
-            pregunta = "Si encontrás una pista en cada uno de 4 estantes y luego duplicás la cantidad, ¿cuántas pistas tenés?",
-            opciones = listOf("8 pistas", "4 pistas", "10 pistas"),
-            respuestaCorrecta = "8 pistas",
-            recompensa = 20
-        )
-    )
-
-    val listaRetos = if (nivel == "biblioteca") retosBiblioteca else retosEdificioA
-    val retoElegido = listaRetos.random()
+    val listaRetos = retosPorNivel[nivel] ?: retosPorNivel.getValue("edificioA")
+    val retoElegido = listaRetos[numeroNivel % listaRetos.size]
 
     return retoElegido.copy(
         opciones = retoElegido.opciones.shuffled()
@@ -106,8 +285,13 @@ fun generarRetoIA(nivel: String): RetoIA {
 @Composable
 fun PantallaReto(
     nivel: String,
-    onCorrecto: () -> Unit,
+    numeroNivel: Int,
+    totalNivelesEdificio: Int = 10,
+    mostrarSiguienteNivel: Boolean,
+    onCorrecto: (Int) -> Unit,
     onIncorrecto: () -> Unit,
+    onVolverANiveles: () -> Unit,
+    onSiguienteNivel: () -> Unit,
     onBack: () -> Unit
 ) {
     val celeste = Color(0xFF32A0A6)
@@ -119,12 +303,24 @@ fun PantallaReto(
     val verdeCorrecto = Color(0xFF2E7D32)
     val rojoIncorrecto = Color(0xFFC62828)
 
-    val reto = remember(nivel) {
-        generarRetoIA(nivel)
+    val reto = remember(nivel, numeroNivel) {
+        generarRetoIA(nivel, numeroNivel)
     }
+
+    val progresoEdificio = ((numeroNivel + 1).toFloat() / totalNivelesEdificio.toFloat())
+        .coerceIn(0f, 1f)
 
     var opcionSeleccionada by remember { mutableStateOf<String?>(null) }
     var respuestaCorrecta by remember { mutableStateOf<Boolean?>(null) }
+    var botonesHabilitados by remember { mutableStateOf(true) }
+    var mostrarResultados by remember { mutableStateOf(false) }
+
+    LaunchedEffect(nivel, numeroNivel) {
+        opcionSeleccionada = null
+        respuestaCorrecta = null
+        botonesHabilitados = true
+        mostrarResultados = false
+    }
 
     Box(
         modifier = Modifier
@@ -142,6 +338,7 @@ fun PantallaReto(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 26.dp, vertical = 34.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -172,6 +369,26 @@ fun PantallaReto(
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = celeste
+            )
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Text(
+                text = "Nivel ${numeroNivel + 1} de $totalNivelesEdificio",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = textoSecundario
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            LinearProgressIndicator(
+                progress = { progresoEdificio },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp),
+                color = celesteOscuro,
+                trackColor = Color(0xFFDCECEF)
             )
 
             Spacer(modifier = Modifier.height(22.dp))
@@ -247,7 +464,7 @@ fun PantallaReto(
 
                     Spacer(modifier = Modifier.height(22.dp))
 
-                    reto.opciones.forEach { opcion ->
+                        reto.opciones.forEach { opcion ->
                         val seleccionada = opcionSeleccionada == opcion
                         val yaRespondio = opcionSeleccionada != null
 
@@ -256,6 +473,8 @@ fun PantallaReto(
                                 if (!yaRespondio) {
                                     opcionSeleccionada = opcion
                                     respuestaCorrecta = opcion == reto.respuestaCorrecta
+                                    // mostrar inmediatamente el mensaje y los botones internos
+                                    mostrarResultados = true
                                 }
                             },
                             modifier = Modifier
@@ -292,12 +511,16 @@ fun PantallaReto(
                         Spacer(modifier = Modifier.height(10.dp))
                     }
 
-                    if (respuestaCorrecta != null) {
+                        if (mostrarResultados) {
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Text(
                             text = if (respuestaCorrecta == true) {
-                                "¡Correcto! Ganaste ${reto.recompensa} puntos y avanzás en el juego."
+                                if (mostrarSiguienteNivel) {
+                                    "¡Correcto! Ganaste ${reto.recompensa} puntos y avanzás en el juego."
+                                } else {
+                                    "¡Correcto! Ganaste ${reto.recompensa} puntos y completaste este edificio."
+                                }
                             } else {
                                 "Respuesta incorrecta. Perdiste una vida, pero podés seguir intentando."
                             },
@@ -310,28 +533,87 @@ fun PantallaReto(
 
                         Spacer(modifier = Modifier.height(18.dp))
 
-                        Button(
-                            onClick = {
-                                if (respuestaCorrecta == true) {
-                                    onCorrecto()
-                                } else {
-                                    onIncorrecto()
+                        if (respuestaCorrecta == true) {
+                            // Mostrar dos opciones cuando la respuesta es correcta:
+                            // - Volver a niveles (o "volver al edificio")
+                            // - Siguiente nivel
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                Button(
+                                    onClick = {
+                                        if (!botonesHabilitados) return@Button
+                                        botonesHabilitados = false
+                                        // Primero aplicar la recompensa / lógica de correcto
+                                        onCorrecto(reto.recompensa)
+                                        // Luego navegar a la pantalla de niveles
+                                        onVolverANiveles()
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(54.dp),
+                                    shape = RoundedCornerShape(17.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = celeste
+                                    )
+                                ) {
+                                    Text(
+                                        text = "Volver al edificio",
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
                                 }
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(54.dp),
-                            shape = RoundedCornerShape(17.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = celeste
-                            )
-                        ) {
-                            Text(
-                                text = "Continuar",
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
+
+                                Spacer(modifier = Modifier.height(10.dp))
+
+                                if (mostrarSiguienteNivel) {
+                                    Button(
+                                        onClick = {
+                                            if (!botonesHabilitados) return@Button
+                                            botonesHabilitados = false
+                                            // Aplicar recompensa y avanzar al siguiente nivel dentro del mismo edificio
+                                            onCorrecto(reto.recompensa)
+                                            onSiguienteNivel()
+                                        },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(54.dp),
+                                        shape = RoundedCornerShape(17.dp),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = celesteOscuro
+                                        )
+                                    ) {
+                                        Text(
+                                            text = "Siguiente nivel",
+                                            fontSize = 15.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
+                            // Respuesta incorrecta: mantener la lógica previa
+                            Button(
+                                onClick = {
+                                    if (!botonesHabilitados) return@Button
+                                    botonesHabilitados = false
+                                    onIncorrecto()
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(54.dp),
+                                shape = RoundedCornerShape(17.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = celeste
+                                )
+                            ) {
+                                Text(
+                                    text = "Continuar",
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
                         }
                     }
                 }
@@ -339,26 +621,29 @@ fun PantallaReto(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            OutlinedButton(
-                onClick = onBack,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(18.dp),
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = bordeSuave
-                )
-            ) {
-                Text(
-                    text = "Volver a niveles",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = celesteOscuro
-                )
-            }
+            // Ocultar el botón inferior cuando ya se mostró la respuesta (y los botones internos)
+            if (respuestaCorrecta == null) {
+                OutlinedButton(
+                    onClick = onBack,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(18.dp),
+                    border = BorderStroke(
+                        width = 1.dp,
+                        color = bordeSuave
+                    )
+                ) {
+                    Text(
+                        text = "Volver al edificio",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = celesteOscuro
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(10.dp))
+            }
         }
     }
 }

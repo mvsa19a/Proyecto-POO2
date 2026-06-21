@@ -7,6 +7,12 @@ import androidx.compose.runtime.*
 import com.example.proyectofinal.ui.screens.*
 import com.example.proyectofinal.ui.theme.ProyectoFINALTheme
 
+data class EdificioInfo(
+    val codigo: String,
+    val nombre: String,
+    val descripcion: String
+)
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -15,13 +21,27 @@ class MainActivity : ComponentActivity() {
             ProyectoFINALTheme {
 
                 val pantallaActual = remember { mutableStateOf("inicio") }
+                val edificios = listOf(
+                    EdificioInfo("edificioA", "Edificio A", "Admisión, Registro Académico y Producción Audiovisual"),
+                    EdificioInfo("edificioE", "Edificio E", "Medicina"),
+                    EdificioInfo("edificioJ", "Edificio J", "Odontología"),
+                    EdificioInfo("edificioP", "Edificio P", "Copérnico"),
+                    EdificioInfo("edificioO", "Edificio O", "Ingeniería y Arquitectura"),
+                    EdificioInfo("edificioK", "Edificio K", "Sección Deportiva"),
+                    EdificioInfo("edificioF", "Edificio F", "Ciencias Jurídicas"),
+                    EdificioInfo("edificioI", "Edificio I", "Ciencias Comerciales, Administrativas y Económicas")
+                )
+                val ordenEdificios = edificios.map { it.codigo }
 
                 var puntos by remember { mutableStateOf(0) }
                 var vidas by remember { mutableStateOf(3) }
                 var nivelSeleccionado by remember { mutableStateOf("edificioA") }
+                var nivelPreguntaActual by remember { mutableStateOf(0) }
+                var edificioSeleccionado by remember { mutableStateOf("edificioA") }
+                val progresoPorEdificio = remember { mutableStateMapOf<String, Int>() }
+                val totalNivelesEdificio = 10
 
-                var bibliotecaDesbloqueada by remember { mutableStateOf(false) }
-                var edificioBDesbloqueado by remember { mutableStateOf(false) }
+                var edificiosDesbloqueados by remember { mutableStateOf(1) }
 
                 when (pantallaActual.value) {
 
@@ -55,23 +75,41 @@ class MainActivity : ComponentActivity() {
                     )
 
                     "niveles" -> PantallaNiveles(
-                        bibliotecaDesbloqueada = bibliotecaDesbloqueada,
-                        edificioBDesbloqueado = edificioBDesbloqueado,
+                        edificiosDesbloqueados = edificiosDesbloqueados,
 
-                        onNivelSeleccionado = { nivel ->
-                            nivelSeleccionado = nivel
-
-                            if (nivel == "edificioA") {
-                                pantallaActual.value = "exploracion"
-                            } else {
-                                pantallaActual.value = "reto"
-                            }
+                        onEdificioSeleccionado = { edificio ->
+                            edificioSeleccionado = edificio
+                            nivelPreguntaActual = (progresoPorEdificio[edificio] ?: 0)
+                                .coerceIn(0, totalNivelesEdificio - 1)
+                            pantallaActual.value = "nivelesEdificio"
                         },
 
                         onBack = {
                             pantallaActual.value = "menu"
                         }
                     )
+
+                    "nivelesEdificio" -> {
+                        val infoEdificio = edificios.firstOrNull { it.codigo == edificioSeleccionado }
+                            ?: edificios.first()
+
+                        NivelesEdificioScreen(
+                            edificioCodigo = edificioSeleccionado,
+                            nombreEdificio = infoEdificio.nombre,
+                            descripcionEdificio = infoEdificio.descripcion,
+                            progresoActual = (progresoPorEdificio[edificioSeleccionado] ?: 0)
+                                .coerceIn(0, totalNivelesEdificio),
+                            totalNiveles = totalNivelesEdificio,
+                            onNivelSeleccionado = { nivel ->
+                                nivelPreguntaActual = nivel
+                                nivelSeleccionado = edificioSeleccionado
+                                pantallaActual.value = "reto"
+                            },
+                            onBack = {
+                                pantallaActual.value = "niveles"
+                            }
+                        )
+                    }
 
                     "exploracion" -> PantallaExploracion(
                         onPistaEncontrada = {
@@ -85,25 +123,26 @@ class MainActivity : ComponentActivity() {
 
                     "reto" -> PantallaReto(
                         nivel = nivelSeleccionado,
+                        numeroNivel = nivelPreguntaActual,
+                        totalNivelesEdificio = totalNivelesEdificio,
+                        mostrarSiguienteNivel = nivelPreguntaActual < totalNivelesEdificio - 1,
 
-                        onCorrecto = {
-                            when (nivelSeleccionado) {
-                                "edificioA" -> {
-                                    puntos += 10
-                                    bibliotecaDesbloqueada = true
-                                }
+                        onCorrecto = { recompensa ->
+                            // Aplicar puntos y guardar el siguiente nivel disponible dentro del mismo edificio.
+                            puntos += recompensa
+                            progresoPorEdificio[nivelSeleccionado] = (nivelPreguntaActual + 1)
+                                .coerceAtMost(totalNivelesEdificio)
 
-                                "biblioteca" -> {
-                                    puntos += 20
-                                    edificioBDesbloqueado = true
-                                }
+                            val esUltimoNivelDelEdificio = nivelPreguntaActual >= totalNivelesEdificio - 1
 
-                                "edificioB" -> {
-                                    puntos += 30
+                            if (esUltimoNivelDelEdificio) {
+                                val indiceSeleccionado = ordenEdificios.indexOf(nivelSeleccionado)
+                                val ultimoDesbloqueado = edificiosDesbloqueados - 1
+
+                                if (indiceSeleccionado == ultimoDesbloqueado && edificiosDesbloqueados < ordenEdificios.size) {
+                                    edificiosDesbloqueados++
                                 }
                             }
-
-                            pantallaActual.value = "niveles"
                         },
 
                         onIncorrecto = {
@@ -111,11 +150,23 @@ class MainActivity : ComponentActivity() {
                                 vidas--
                             }
 
-                            pantallaActual.value = "niveles"
+                            pantallaActual.value = "nivelesEdificio"
+                        },
+
+                        onVolverANiveles = {
+                            pantallaActual.value = "nivelesEdificio"
+                        },
+
+                        onSiguienteNivel = {
+                            if (nivelPreguntaActual < totalNivelesEdificio - 1) {
+                                nivelPreguntaActual++
+                            } else {
+                                pantallaActual.value = "nivelesEdificio"
+                            }
                         },
 
                         onBack = {
-                            pantallaActual.value = "niveles"
+                            pantallaActual.value = "nivelesEdificio"
                         }
                     )
                 }
