@@ -24,9 +24,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             ProyectoFINALTheme {
 
-                val pantallaActual = remember { mutableStateOf("inicio") }
+                val pantallaActual = remember { mutableStateOf("acceso") }
                 val scope = rememberCoroutineScope()
+
+                // Por ahora queda fijo para que Luis luego lo conecte con usuario real desde la API.
                 val idJugador = 1
+
+                var usuarioActual by remember { mutableStateOf("") }
 
                 val edificios = listOf(
                     EdificioInfo("edificioA", "Edificio A", "Admisión, Registro Académico y Producción Audiovisual"),
@@ -50,12 +54,13 @@ class MainActivity : ComponentActivity() {
 
                 val progresoPorEdificio = remember { mutableStateMapOf<String, Int>() }
 
-                // Aquí se guardan las preguntas que ya salieron por edificio
+                // Aquí se guardan las preguntas que ya salieron por edificio.
                 val preguntasUsadasPorEdificio = remember { mutableStateMapOf<String, List<Int>>() }
 
                 val totalNivelesEdificio = 10
 
                 var edificiosDesbloqueados by remember { mutableStateOf(1) }
+
                 LaunchedEffect(Unit) {
                     try {
                         val respuesta = RetrofitClient.api.obtenerJugador(idJugador)
@@ -74,6 +79,35 @@ class MainActivity : ComponentActivity() {
                 }
 
                 when (pantallaActual.value) {
+
+                    "acceso" -> PantallaAcceso(
+                        onCrearUsuario = {
+                            pantallaActual.value = "crearUsuario"
+                        },
+                        onLogin = {
+                            pantallaActual.value = "login"
+                        }
+                    )
+
+                    "crearUsuario" -> PantallaCrearUsuario(
+                        onUsuarioCreado = { usuario, _ ->
+                            usuarioActual = usuario
+                            pantallaActual.value = "inicio"
+                        },
+                        onBack = {
+                            pantallaActual.value = "acceso"
+                        }
+                    )
+
+                    "login" -> PantallaLogin(
+                        onLoginExitoso = { usuario, _ ->
+                            usuarioActual = usuario
+                            pantallaActual.value = "inicio"
+                        },
+                        onBack = {
+                            pantallaActual.value = "acceso"
+                        }
+                    )
 
                     "inicio" -> PantallaInicio(
                         onStart = {
