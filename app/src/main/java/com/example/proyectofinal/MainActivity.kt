@@ -10,6 +10,9 @@ import com.example.proyectofinal.network.ActualizarJugadorRequest
 import com.example.proyectofinal.network.ActualizarProgresoRequest
 import com.example.proyectofinal.network.RetrofitClient
 import kotlinx.coroutines.launch
+import com.example.proyectofinal.local.EscapeUamDatabase
+import com.example.proyectofinal.local.JugadorLocalEntity
+import com.example.proyectofinal.local.ProgresoLocalEntity
 
 data class EdificioInfo(
     val codigo: String,
@@ -23,6 +26,10 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ProyectoFINALTheme {
+
+                val dao = remember {
+                    EscapeUamDatabase.getDatabase(applicationContext).escapeUamDao()
+                }
 
                 val pantallaActual = remember { mutableStateOf("acceso") }
                 val scope = rememberCoroutineScope()
@@ -69,12 +76,56 @@ class MainActivity : ComponentActivity() {
                         vidas = respuesta.jugador.vidas
                         edificiosDesbloqueados = respuesta.jugador.edificiosDesbloqueados
 
+                        progresoPorEdificio.clear()
+
                         respuesta.progreso.forEach { progreso ->
                             progresoPorEdificio[progreso.codigoEdificio] = progreso.nivelActual
                         }
 
+                        // Guardar copia local en Room
+                        dao.guardarJugador(
+                            JugadorLocalEntity(
+                                idJugador = respuesta.jugador.idJugador,
+                                nombre = respuesta.jugador.nombre,
+                                usuario = null,
+                                puntos = respuesta.jugador.puntos,
+                                vidas = respuesta.jugador.vidas,
+                                edificiosDesbloqueados = respuesta.jugador.edificiosDesbloqueados
+                            )
+                        )
+
+                        dao.guardarProgreso(
+                            respuesta.progreso.map { progreso ->
+                                ProgresoLocalEntity(
+                                    idJugador = respuesta.jugador.idJugador,
+                                    codigoEdificio = progreso.codigoEdificio,
+                                    nombre = progreso.nombre,
+                                    descripcion = progreso.descripcion,
+                                    orden = progreso.orden,
+                                    nivelActual = progreso.nivelActual,
+                                    completado = progreso.completado
+                                )
+                            }
+                        )
+
                     } catch (e: Exception) {
                         e.printStackTrace()
+
+                        // Si falla la API, cargamos desde Room
+                        val jugadorLocal = dao.obtenerJugador(idJugador)
+                        val progresoLocal = dao.obtenerProgreso(idJugador)
+
+                        if (jugadorLocal != null) {
+                            puntos = jugadorLocal.puntos
+                            vidas = jugadorLocal.vidas
+                            edificiosDesbloqueados = jugadorLocal.edificiosDesbloqueados
+
+                            progresoPorEdificio.clear()
+
+                            progresoLocal.forEach { progreso ->
+                                progresoPorEdificio[progreso.codigoEdificio] = progreso.nivelActual
+                            }
+                        }
                     }
                 }
 
@@ -253,6 +304,19 @@ class MainActivity : ComponentActivity() {
                                 } catch (e: Exception) {
                                     e.printStackTrace()
                                 }
+                                dao.actualizarJugador(
+                                    idJugador = idJugador,
+                                    puntos = puntos,
+                                    vidas = vidas,
+                                    edificiosDesbloqueados = edificiosDesbloqueados
+                                )
+
+                                dao.actualizarProgreso(
+                                    idJugador = idJugador,
+                                    codigoEdificio = nivelSeleccionado,
+                                    nivelActual = nuevoProgreso,
+                                    completado = nuevoProgreso >= totalNivelesEdificio
+                                )
                             }
                         },
 
@@ -288,6 +352,18 @@ class MainActivity : ComponentActivity() {
                                     } catch (e: Exception) {
                                         e.printStackTrace()
                                     }
+
+                                    dao.actualizarJugador(
+                                        idJugador = idJugador,
+                                        puntos = puntos,
+                                        vidas = vidas,
+                                        edificiosDesbloqueados = edificiosDesbloqueados
+                                    )
+
+                                    dao.reiniciarEdificio(
+                                        idJugador = idJugador,
+                                        codigoEdificio = nivelSeleccionado
+                                    )
                                 }
 
                             } else {
@@ -304,6 +380,13 @@ class MainActivity : ComponentActivity() {
                                     } catch (e: Exception) {
                                         e.printStackTrace()
                                     }
+
+                                    dao.actualizarJugador(
+                                        idJugador = idJugador,
+                                        puntos = puntos,
+                                        vidas = vidas,
+                                        edificiosDesbloqueados = edificiosDesbloqueados
+                                    )
                                 }
                             }
                         },
