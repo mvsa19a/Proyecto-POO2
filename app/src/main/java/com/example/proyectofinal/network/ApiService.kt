@@ -30,4 +30,7 @@ interface ApiService {
         @Path("idJugador") idJugador: Int,
         @Path("codigoEdificio") codigoEdificio: String
     )
+
+    @GET("jugadores/ranking")
+    suspend fun obtenerRanking(): List<JugadorRanking>
 }

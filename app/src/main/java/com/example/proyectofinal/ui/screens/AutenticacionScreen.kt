@@ -27,6 +27,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 
 @Composable
 fun PantallaAcceso(
@@ -281,6 +283,7 @@ fun PantallaLogin(
     var usuario by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
     var mensajeError by remember { mutableStateOf("") }
+    var mostrarDialogoEliminar by remember { mutableStateOf(false) }
 
     AuthBackground {
         Column(
@@ -398,6 +401,7 @@ fun PantallaLogin(
                         fontWeight = FontWeight.Medium,
                         color = Color(0xFF187C84)
                     )
+
                 }
             }
         }

@@ -59,4 +59,10 @@ interface EscapeUamDao {
         idJugador: Int,
         codigoEdificio: String
     )
+
+    @Query("DELETE FROM progreso_local WHERE idJugador = :idJugador")
+    suspend fun eliminarProgreso(idJugador: Int)
+
+    @Query("DELETE FROM jugador_local WHERE idJugador = :idJugador")
+    suspend fun eliminarJugador(idJugador: Int)
 }

@@ -19,13 +19,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import kotlinx.coroutines.launch
 
 @Composable
 fun PantallaMenu(
     puntos: Int,
     vidas: Int,
     onIrNiveles: () -> Unit,
-    onBack: () -> Unit
+    onEliminarCuenta: () -> Unit,
+    onBack: () -> Unit,
+    onLeaderboard:()->Unit,
+    onVerProgreso:()->Unit
 ) {
     val celeste = Color(0xFF32A0A6)
     val celesteOscuro = Color(0xFF187C84)
@@ -33,6 +44,8 @@ fun PantallaMenu(
     val textoPrincipal = Color(0xFF1F2937)
     val textoSecundario = Color(0xFF64748B)
     val bordeSuave = Color(0xFFD6E3E6)
+
+    var mostrarDialogoEliminar by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -161,7 +174,7 @@ fun PantallaMenu(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     OutlinedButton(
-                        onClick = { },
+                        onClick = onVerProgreso,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
@@ -178,7 +191,48 @@ fun PantallaMenu(
                             color = celesteOscuro
                         )
                     }
+                    Spacer(modifier = Modifier.height(12.dp))
 
+                    OutlinedButton(
+
+                        onClick = onLeaderboard,
+
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp)
+
+                    ) {
+
+                        Text(
+
+                            "🏆 Leaderboard",
+
+                            color = Color(0xFF187C84)
+
+                        )
+
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    OutlinedButton(
+                        onClick = {
+                            mostrarDialogoEliminar = true
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        shape = RoundedCornerShape(18.dp),
+                        border = BorderStroke(
+                            width = 1.dp,
+                            color = Color.Red
+                        )
+                    ) {
+                        Text(
+                            text = "Eliminar usuario",
+                            color = Color.Red,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                     Spacer(modifier = Modifier.height(12.dp))
 
                     OutlinedButton(
@@ -214,7 +268,61 @@ fun PantallaMenu(
             Spacer(modifier = Modifier.height(10.dp))
         }
     }
+    if (mostrarDialogoEliminar) {
+
+        AlertDialog(
+            onDismissRequest = {
+                mostrarDialogoEliminar = false
+            },
+
+            title = {
+                Text("Eliminar cuenta")
+            },
+
+            text = {
+                Text("¿Seguro que deseas eliminar tu cuenta?")
+            },
+
+            confirmButton = {
+
+                TextButton(
+                    onClick = {
+
+                        mostrarDialogoEliminar = false
+
+                        onEliminarCuenta()
+
+                    }
+                ) {
+
+                    Text(
+                        "Eliminar",
+                        color = Color.Red
+                    )
+
+                }
+
+            },
+
+            dismissButton = {
+
+                TextButton(
+                    onClick = {
+                        mostrarDialogoEliminar = false
+                    }
+                ) {
+
+                    Text("Cancelar")
+
+                }
+
+            }
+
+        )
+
+    }
 }
+
 
 @Composable
 fun MenuInfoCard(

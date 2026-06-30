@@ -177,17 +177,76 @@ class MainActivity : ComponentActivity() {
                             pantallaActual.value = "inicio"
                         }
                     )
+                    "leaderboard" -> LeaderboardScreen(
+
+                        onBack = {
+
+                            pantallaActual.value="menu"
+
+                        }
+
+                    )
+                    "progreso" -> ProgresoScreen(
+
+                        puntos = puntos,
+
+                        vidas = vidas,
+
+                        edificiosDesbloqueados = edificiosDesbloqueados,
+
+                        progresoPorEdificio = progresoPorEdificio,
+
+                        onBack = {
+
+                            pantallaActual.value="menu"
+
+                        }
+
+                    )
 
                     "menu" -> PantallaMenu(
                         puntos = puntos,
                         vidas = vidas,
+
                         onIrNiveles = {
                             pantallaActual.value = "niveles"
                         },
+
+                        onEliminarCuenta = {
+
+                            scope.launch {
+
+                                try {
+                                    //// RetrofitClient.api.eliminarJugador(idJugador)
+                                    dao.eliminarJugador(idJugador)
+
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+
+                                dao.eliminarJugador(idJugador)
+
+                                pantallaActual.value = "acceso"
+
+                            }
+
+                        },
+                        onLeaderboard = {
+
+                            pantallaActual.value="leaderboard"
+
+                        },
+                        onVerProgreso = {
+
+                            pantallaActual.value="progreso"
+
+                        },
+
                         onBack = {
                             pantallaActual.value = "inicio"
                         }
                     )
+
 
                     "niveles" -> PantallaNiveles(
                         edificiosDesbloqueados = edificiosDesbloqueados,
