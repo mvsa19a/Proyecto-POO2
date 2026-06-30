@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import com.example.proyectofinal.local.EscapeUamDatabase
 import com.example.proyectofinal.local.JugadorLocalEntity
 import com.example.proyectofinal.local.ProgresoLocalEntity
+import com.example.proyectofinal.network.AuthRequest
 
 data class EdificioInfo(
     val codigo: String,
@@ -35,7 +36,7 @@ class MainActivity : ComponentActivity() {
                 val scope = rememberCoroutineScope()
 
                 // Por ahora queda fijo para que Luis luego lo conecte con usuario real desde la API.
-                val idJugador = 1
+                var idJugador by remember { mutableStateOf(1) }
 
                 var usuarioActual by remember { mutableStateOf("") }
 
@@ -141,9 +142,63 @@ class MainActivity : ComponentActivity() {
                     )
 
                     "crearUsuario" -> PantallaCrearUsuario(
-                        onUsuarioCreado = { usuario, _ ->
-                            usuarioActual = usuario
-                            pantallaActual.value = "inicio"
+                        onUsuarioCreado = { usuario, contrasena ->
+
+                            scope.launch {
+                                try {
+                                    val respuestaRegistro = RetrofitClient.api.registrar(
+                                        AuthRequest(
+                                            usuario = usuario,
+                                            contrasena = contrasena
+                                        )
+                                    )
+
+                                    idJugador = respuestaRegistro.jugador.idJugador
+                                    usuarioActual = usuario
+
+                                    val respuestaJugador = RetrofitClient.api.obtenerJugador(idJugador)
+
+                                    puntos = respuestaJugador.jugador.puntos
+                                    vidas = respuestaJugador.jugador.vidas
+                                    edificiosDesbloqueados = respuestaJugador.jugador.edificiosDesbloqueados
+
+                                    progresoPorEdificio.clear()
+
+                                    respuestaJugador.progreso.forEach { progreso ->
+                                        progresoPorEdificio[progreso.codigoEdificio] = progreso.nivelActual
+                                    }
+
+                                    dao.guardarJugador(
+                                        JugadorLocalEntity(
+                                            idJugador = respuestaJugador.jugador.idJugador,
+                                            nombre = respuestaJugador.jugador.nombre,
+                                            usuario = usuario,
+                                            puntos = respuestaJugador.jugador.puntos,
+                                            vidas = respuestaJugador.jugador.vidas,
+                                            edificiosDesbloqueados = respuestaJugador.jugador.edificiosDesbloqueados
+                                        )
+                                    )
+
+                                    dao.guardarProgreso(
+                                        respuestaJugador.progreso.map { progreso ->
+                                            ProgresoLocalEntity(
+                                                idJugador = respuestaJugador.jugador.idJugador,
+                                                codigoEdificio = progreso.codigoEdificio,
+                                                nombre = progreso.nombre,
+                                                descripcion = progreso.descripcion,
+                                                orden = progreso.orden,
+                                                nivelActual = progreso.nivelActual,
+                                                completado = progreso.completado
+                                            )
+                                        }
+                                    )
+
+                                    pantallaActual.value = "inicio"
+
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
                         },
                         onBack = {
                             pantallaActual.value = "acceso"
@@ -151,9 +206,63 @@ class MainActivity : ComponentActivity() {
                     )
 
                     "login" -> PantallaLogin(
-                        onLoginExitoso = { usuario, _ ->
-                            usuarioActual = usuario
-                            pantallaActual.value = "inicio"
+                        onLoginExitoso = { usuario, contrasena ->
+
+                            scope.launch {
+                                try {
+                                    val respuestaLogin = RetrofitClient.api.login(
+                                        AuthRequest(
+                                            usuario = usuario,
+                                            contrasena = contrasena
+                                        )
+                                    )
+
+                                    idJugador = respuestaLogin.jugador.idJugador
+                                    usuarioActual = usuario
+
+                                    val respuestaJugador = RetrofitClient.api.obtenerJugador(idJugador)
+
+                                    puntos = respuestaJugador.jugador.puntos
+                                    vidas = respuestaJugador.jugador.vidas
+                                    edificiosDesbloqueados = respuestaJugador.jugador.edificiosDesbloqueados
+
+                                    progresoPorEdificio.clear()
+
+                                    respuestaJugador.progreso.forEach { progreso ->
+                                        progresoPorEdificio[progreso.codigoEdificio] = progreso.nivelActual
+                                    }
+
+                                    dao.guardarJugador(
+                                        JugadorLocalEntity(
+                                            idJugador = respuestaJugador.jugador.idJugador,
+                                            nombre = respuestaJugador.jugador.nombre,
+                                            usuario = usuario,
+                                            puntos = respuestaJugador.jugador.puntos,
+                                            vidas = respuestaJugador.jugador.vidas,
+                                            edificiosDesbloqueados = respuestaJugador.jugador.edificiosDesbloqueados
+                                        )
+                                    )
+
+                                    dao.guardarProgreso(
+                                        respuestaJugador.progreso.map { progreso ->
+                                            ProgresoLocalEntity(
+                                                idJugador = respuestaJugador.jugador.idJugador,
+                                                codigoEdificio = progreso.codigoEdificio,
+                                                nombre = progreso.nombre,
+                                                descripcion = progreso.descripcion,
+                                                orden = progreso.orden,
+                                                nivelActual = progreso.nivelActual,
+                                                completado = progreso.completado
+                                            )
+                                        }
+                                    )
+
+                                    pantallaActual.value = "inicio"
+
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
                         },
                         onBack = {
                             pantallaActual.value = "acceso"
@@ -217,7 +326,7 @@ class MainActivity : ComponentActivity() {
                             scope.launch {
 
                                 try {
-                                    //// RetrofitClient.api.eliminarJugador(idJugador)
+                                    RetrofitClient.api.eliminarJugador(idJugador)
                                     dao.eliminarJugador(idJugador)
 
                                 } catch (e: Exception) {

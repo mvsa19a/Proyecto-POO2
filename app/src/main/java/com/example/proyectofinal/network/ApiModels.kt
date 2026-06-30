@@ -47,3 +47,13 @@ data class ActualizarProgresoRequest(
 
     val completado: Boolean
 )
+
+data class AuthRequest(
+    val usuario: String,
+    val contrasena: String
+)
+
+data class AuthResponse(
+    val mensaje: String,
+    val jugador: JugadorDto
+)

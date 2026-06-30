@@ -4,7 +4,8 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PUT
 import retrofit2.http.Path
-
+import retrofit2.http.POST
+import retrofit2.http.DELETE
 interface ApiService {
 
     @GET("jugador/{id}")
@@ -31,6 +32,22 @@ interface ApiService {
         @Path("codigoEdificio") codigoEdificio: String
     )
 
-    @GET("jugadores/ranking")
+    @GET("ranking")
     suspend fun obtenerRanking(): List<JugadorRanking>
+
+    @POST("auth/register")
+    suspend fun registrar(
+        @Body datos: AuthRequest
+    ): AuthResponse
+
+    @POST("auth/login")
+    suspend fun login(
+        @Body datos: AuthRequest
+    ): AuthResponse
+
+    @DELETE("jugador/{id}")
+    suspend fun eliminarJugador(
+        @Path("id") id: Int
+    )
 }
+
