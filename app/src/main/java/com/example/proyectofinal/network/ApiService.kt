@@ -49,5 +49,10 @@ interface ApiService {
     suspend fun eliminarJugador(
         @Path("id") id: Int
     )
+
+    @GET("preguntas/{codigoEdificio}")
+    suspend fun obtenerPreguntas(
+        @Path("codigoEdificio") codigoEdificio: String
+    ): List<PreguntaDto>
 }
 

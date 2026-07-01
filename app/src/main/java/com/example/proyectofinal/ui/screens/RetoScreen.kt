@@ -27,6 +27,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.proyectofinal.network.PreguntaDto
+import com.example.proyectofinal.network.RetrofitClient
 
 data class RetoIA(
     val id: Int,
@@ -45,6 +47,43 @@ fun obtenerDificultadPorNivel(numeroNivel: Int): String {
         in 4..6 -> "Media"
         else -> "Difícil"
     }
+}
+
+fun generarRetoDesdeApi(
+    preguntas: List<PreguntaDto>,
+    numeroNivel: Int,
+    preguntasUsadas: List<Int>
+): RetoIA {
+    val dificultadNivel = obtenerDificultadPorNivel(numeroNivel)
+
+    val preguntasDisponibles = preguntas.filter {
+        it.dificultad == dificultadNivel && !preguntasUsadas.contains(it.idPregunta)
+    }
+
+    val preguntasRespaldo = preguntas.filter {
+        it.dificultad == dificultadNivel
+    }
+
+    val preguntaElegida = if (preguntasDisponibles.isNotEmpty()) {
+        preguntasDisponibles.random()
+    } else {
+        preguntasRespaldo.random()
+    }
+
+    return RetoIA(
+        id = preguntaElegida.idPregunta,
+        titulo = preguntaElegida.titulo,
+        dificultad = preguntaElegida.dificultad,
+        pista = preguntaElegida.pista,
+        pregunta = preguntaElegida.textoPregunta,
+        opciones = listOf(
+            preguntaElegida.opcionA,
+            preguntaElegida.opcionB,
+            preguntaElegida.opcionC
+        ).shuffled(),
+        respuestaCorrecta = preguntaElegida.respuestaCorrecta,
+        recompensa = preguntaElegida.recompensa
+    )
 }
 
 fun preguntasEdificioA(): List<RetoIA> {
@@ -2189,9 +2228,63 @@ fun PantallaReto(
     val rojoIncorrecto = Color(0xFFC62828)
 
     val preguntasKey = preguntasUsadas.joinToString()
-    val reto = remember(nivel, numeroNivel, preguntasKey) {
-        generarRetoIA(
-            nivel = nivel,
+
+    var preguntasApi by remember(nivel) { mutableStateOf<List<PreguntaDto>>(emptyList()) }
+    var cargandoPreguntas by remember(nivel) { mutableStateOf(true) }
+    var errorPreguntas by remember(nivel) { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(nivel) {
+        try {
+            cargandoPreguntas = true
+            errorPreguntas = null
+            preguntasApi = RetrofitClient.api.obtenerPreguntas(nivel)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            errorPreguntas = "No se pudieron cargar las preguntas desde la API."
+        } finally {
+            cargandoPreguntas = false
+        }
+    }
+
+    if (cargandoPreguntas) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(fondoClaro),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Cargando preguntas...",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = celesteOscuro
+            )
+        }
+        return
+    }
+
+    if (errorPreguntas != null || preguntasApi.isEmpty()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(fondoClaro)
+                .padding(24.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = errorPreguntas ?: "No hay preguntas registradas para este edificio.",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = rojoIncorrecto,
+                textAlign = TextAlign.Center
+            )
+        }
+        return
+    }
+
+    val reto = remember(nivel, numeroNivel, preguntasKey, preguntasApi) {
+        generarRetoDesdeApi(
+            preguntas = preguntasApi,
             numeroNivel = numeroNivel,
             preguntasUsadas = preguntasUsadas
         )

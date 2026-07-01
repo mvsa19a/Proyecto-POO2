@@ -57,3 +57,34 @@ data class AuthResponse(
     val mensaje: String,
     val jugador: JugadorDto
 )
+data class PreguntaDto(
+    @SerializedName("id_pregunta")
+    val idPregunta: Int,
+
+    @SerializedName("codigo_edificio")
+    val codigoEdificio: String,
+
+    @SerializedName("numero_pregunta")
+    val numeroPregunta: Int,
+
+    val titulo: String,
+    val dificultad: String,
+    val pista: String,
+
+    @SerializedName("texto_pregunta")
+    val textoPregunta: String,
+
+    @SerializedName("opcion_a")
+    val opcionA: String,
+
+    @SerializedName("opcion_b")
+    val opcionB: String,
+
+    @SerializedName("opcion_c")
+    val opcionC: String,
+
+    @SerializedName("respuesta_correcta")
+    val respuestaCorrecta: String,
+
+    val recompensa: Int
+)
